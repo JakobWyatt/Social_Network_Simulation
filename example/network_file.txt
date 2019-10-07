@@ -11,14 +11,14 @@ Landstrider
 Master
 Nebrie
 skekUng
-Master Jen
-Kira Landstrider
-Kira Nebrie
-Healer Jen
-Master Healer
-skekUng Garthim
-skekUng Bat-Crystal
-Emperor Chamberlain
-Emperor skekUng
-Kira Fizzgig
-Aughra Jen
+Master:Jen
+Kira:Landstrider
+Kira:Nebrie
+Healer:Jen
+Master:Healer
+skekUng:Garthim
+skekUng:Bat-Crystal
+Emperor:Chamberlain
+Emperor:skekUng
+Kira:Fizzgig
+Aughra:Jen
