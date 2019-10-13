@@ -70,6 +70,14 @@ class DSADirectedGraph:
         """
         self._verticies.insertFirst(DSADirectedGraphVertex(label, value))
 
+    def removeVertex(self, label: object) -> None:
+        vertex = self.getVertex(label)
+        for x in vertex.predecessor:
+            x.removeSuccessor(vertex)
+        for x in vertex.successor:
+            x.removePredecessor(vertex)
+        self._verticies.remove(vertex)
+
     def addEdge(self, label1: object, label2: object) -> None:
         """
         Assumes that the nodes already exist.
@@ -78,6 +86,15 @@ class DSADirectedGraph:
         vertex2 = self.getVertex(label2)
         vertex1.addSuccessor(vertex2)
         vertex2.addPredecessor(vertex1)
+
+    def removeEdge(self, label1: object, label2: object) -> None:
+        """
+        Assumes that the nodes already exist.
+        """
+        vertex1 = self.getVertex(label1)
+        vertex2 = self.getVertex(label2)
+        vertex1.removeSuccessor(vertex2)
+        vertex2.removePredecessor(vertex1)
 
     def hasVertex(self, label: object) -> bool:
         return self._verticies.find(DSADirectedGraphVertex(label, None))
@@ -204,6 +221,31 @@ class TestDSADirectedGraph(unittest.TestCase):
             self.assertEqual(x1.label, x2)
         for x1, x2 in zip(graph.getPredecessor("hello"), ["world"]):
             self.assertEqual(x1.label, x2)
+    
+    def testRemoval(self):
+        graph = DSADirectedGraph()
+        graph.addVertex("a", None)
+        graph.addVertex("b", None)
+        graph.addVertex("c", None)
+        graph.addEdge("a", "b")
+        graph.addEdge("b", "a")
+        graph.addEdge("c", "b")
+        graph.addEdge("c", "a")
+        self.assertTrue(graph.isSuccessor("a", "b"))
+        self.assertTrue(graph.isSuccessor("b", "a"))
+        self.assertTrue(graph.isSuccessor("c", "b"))
+        self.assertTrue(graph.isSuccessor("c", "a"))
+        self.assertFalse(graph.isSuccessor("a", "c"))
+        self.assertFalse(graph.isSuccessor("b", "c"))
+        graph.removeEdge("b", "a")
+        self.assertTrue(graph.isSuccessor("a", "b"))
+        self.assertFalse(graph.isSuccessor("b", "a"))
+        graph.addEdge("a", "b")
+        graph.removeVertex("b")
+        self.assertFalse(graph.isSuccessor("a", "b"))
+        self.assertFalse(graph.isSuccessor("c", "b"))
+        self.assertTrue(graph.isSuccessor("c", "a"))
+        self.assertFalse(graph.isSuccessor("a", "c"))
 
     def testEdgeCount(self):
         graph = DSADirectedGraph()
