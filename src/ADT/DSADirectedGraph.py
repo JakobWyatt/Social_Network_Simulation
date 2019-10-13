@@ -54,7 +54,7 @@ class DSADirectedGraphVertex:
                         adj=" ".join([x.label for x in self.successor])))
 
     def gv(self) -> str:
-        return "".join([f"{self.label} -> {x.label}\n" for x in self.successor])
+        return "".join([f"\"{self.label}\" -> \"{x.label}\"\n" for x in self.successor])
 
     def __eq__(self, other: 'DSADirectedGraphVertex') -> bool:
         return self.label == other.label
@@ -146,8 +146,7 @@ class DSADirectedGraph:
     def display(self) -> str:
         return "digraph {\n" + "".join([x.gv() for x in self._verticies]) + "}\n"
 
-    @staticmethod
-    def render(gv: str, *, type='svg', id=''):
+    def render(self, *, type='svg', id=''):
         """
         Renders a graphviz DOT file.
         Prints the render result to a temporary output file.
@@ -159,12 +158,12 @@ class DSADirectedGraph:
         from tempfile import NamedTemporaryFile
 
         if which("dot") is None:
-            raise RuntimeError("Rendering DOT files requires "
-                               "graphviz to be installed.")
+            print("Graphviz not installed. Falling back on adjacency list display.")
+            print(self.displayAsList())
         else:
             with NamedTemporaryFile(delete=False, suffix=f'{id}.{type}') as f:
                 # Render the graph.
-                run(["dot", f"-T{type}", "-o", f.name], input=gv.encode())
+                run(["dot", f"-T{type}", "-o", f.name], input=self.display().encode())
                 # Attempt to display the graph.
                 if which("xdg-open") is not None:
                     run(["xdg-open", f.name])
