@@ -26,7 +26,8 @@ class DSAHeapEntry:
 
 
 class DSAHeap:
-    def __init__(self, size: int = 100):
+    def __init__(self, size: int = 100, *, resizeFactor=2.0):
+        self._resizeFactor = resizeFactor
         self._heap = np.zeros(size, dtype=object)
         for i in range(len(self._heap)):
             self._heap[i] = DSAHeapEntry(None, None)
@@ -34,7 +35,12 @@ class DSAHeap:
 
     def add(self, priority: int, value: object):
         if len(self) == len(self._heap):
-            raise ValueError("Heap is full.")
+            newHeap = np.zeros(int(len(self._heap) * self._resizeFactor), dtype=object)
+            for i, x in enumerate(self._heap):
+                newHeap[i] = x
+            for i in range(len(self._heap), len(newHeap)):
+                newHeap[i] = DSAHeapEntry(None, None)
+            self._heap = newHeap
         self._heap[len(self)].priority = priority
         self._heap[len(self)].value = value
         self._trickleUp(len(self))
@@ -103,7 +109,7 @@ class DSAHeap:
 
 class TestDSAHeap(unittest.TestCase):
     def testAddRemove(self):
-        heap = DSAHeap()
+        heap = DSAHeap(size=1)
         self.assertRaises(ValueError, heap.remove)
         heap.add(5, "five")
         heap.add(6, "six")
