@@ -1,0 +1,6 @@
+name: social-network-sim
+dependencies:
+  - python=3.7
+  - pycodestyle
+  - graphviz
+  - numpy
