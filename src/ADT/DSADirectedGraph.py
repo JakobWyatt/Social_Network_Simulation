@@ -3,9 +3,6 @@ import typing
 import numpy as np
 
 from ADT.linkedLists import DSALinkedList
-from ADT.DSAListQueue import DSAListQueue
-from ADT.DSAListStack import DSAListStack
-
 
 class DSADirectedGraphVertex:
     def __init__(self, label: object, value: object):
@@ -173,54 +170,6 @@ class DSADirectedGraph:
                 graph.addEdge(l1, l2)
         return graph
 
-    def depthFirstSearch(self) -> 'DSADirectedGraph':
-        # Mark nodes as new
-        tree = DSADirectedGraph()
-        stack = DSAListStack()
-        for v in self._verticies:
-            v.visited = False
-
-        # Set up first node
-        if self._verticies._head is not None:
-            head = self._verticies.peekFirst()
-            head.visited = True
-            tree.addVertex(head.label, head.value)
-            stack.push(head)
-        
-        # Perform DFS
-        while not stack.isEmpty():
-            node = next((x for x in stack.top().adjacent if not x.visited), None)
-            if node is None:
-                stack.pop()
-            else:
-                node.visited = True
-                tree.addVertex(node.label, node.value)
-                tree.addEdge(stack.top().label, node.label)
-                stack.push(node)
-        return tree
-
-    def breadthFirstSearch(self) -> 'DSADirectedGraph':
-        tree = DSADirectedGraph()
-        queue = DSAListQueue()
-        for v in self._verticies:
-            v.visited = False
-        
-        if self._verticies._head is not None:
-            head = self._verticies.peekFirst()
-            head.visited = True
-            tree.addVertex(head.label, head.value)
-            queue.enqueue(head)
-        
-        while not queue.isEmpty():
-            centre = queue.dequeue()
-            for v in centre.adjacent:
-                if not v.visited:
-                    queue.enqueue(v)
-                    tree.addVertex(v.label, v.value)
-                    tree.addEdge(centre.label, v.label)
-                    v.visited = True
-        return tree
-
 
 class TestDSADirectedGraph(unittest.TestCase):
     def testAddVertex(self):
@@ -340,27 +289,6 @@ class TestDSADirectedGraph(unittest.TestCase):
         graph.addEdge("F", "G")
         self.assertEqual(graph.displayAsMatrix(), readGraph.displayAsMatrix())
 
-    def d_testBFSandDFS(self):
-        graph1 = DSADirectedGraph.readGraphFile("3a.al")
-        graph2 = DSADirectedGraph.readGraphFile("3b.al")
-
-        bfs1Str = ("G,None:\n"
-                   "F,None:\n"
-                   "E,None:G\n"
-                   "D,None:F\n"
-                   "C,None:\n"
-                   "B,None:\n"
-                   "A,None:E D C B\n")
-        self.assertEqual(graph1.breadthFirstSearch().displayAsList(), bfs1Str)
-
-        dfs1Str = ("D,None:\n"
-                   "C,None:D\n"
-                   "G,None:\n"
-                   "F,None:G\n"
-                   "E,None:F\n"
-                   "B,None:E\n"
-                   "A,None:C B\n")
-        self.assertEqual(graph1.depthFirstSearch().displayAsList(), dfs1Str)
 
 if __name__ == "__main__":
     unittest.main()
