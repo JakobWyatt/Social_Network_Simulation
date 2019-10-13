@@ -1,0 +1,4 @@
+Things to do:
+    - Implement DSAOrderedList
+    - Implement post display
+    - Implement core post algorithm
