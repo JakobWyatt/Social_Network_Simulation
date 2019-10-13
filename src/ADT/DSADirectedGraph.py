@@ -11,7 +11,8 @@ class DSADirectedGraphVertex:
     def __init__(self, label: object, value: object):
         self._label = label
         self._value = value
-        self._adjacent = DSALinkedList()
+        self._successor = DSALinkedList()
+        self._predecessor = DSALinkedList()
         self._visited = False
 
     @property
@@ -23,11 +24,24 @@ class DSADirectedGraphVertex:
         return self._value
 
     @property
-    def adjacent(self) -> 'DSALinkedList':
-        return self._adjacent
+    def successor(self) -> 'DSALinkedList':
+        return self._successor
 
-    def addEdge(self, vertex: 'DSADirectedGraphVertex') -> None:
-        self._adjacent.insertFirst(vertex)
+    def addSuccessor(self, vertex: 'DSADirectedGraphVertex') -> None:
+        self._successor.insertFirst(vertex)
+
+    def removeSuccessor(self, vertex: 'DSADirectedGraphVertex') -> None:
+        self._successor.remove(vertex)
+
+    @property
+    def predecessor(self) -> 'DSALinkedList':
+        return self._predecessor
+
+    def addPredecessor(self, vertex: 'DSADirectedGraphVertex') -> None:
+        self._predecessor.insertFirst(vertex)
+
+    def removePredecessor(self, vertex: 'DSADirectedGraphVertex') -> None:
+        self._predecessor.remove(vertex)
 
     @property
     def visited(self) -> bool:
@@ -40,10 +54,10 @@ class DSADirectedGraphVertex:
     def __str__(self) -> str:
         return ("{label},{value}:{adj}"
                 .format(label=self.label, value=self.value,
-                        adj=" ".join([x.label for x in self.adjacent])))
+                        adj=" ".join([x.label for x in self.successor])))
 
     def gv(self) -> str:
-        return "".join([f"{self.label} -> {x.label}\n" for x in self.adjacent])
+        return "".join([f"{self.label} -> {x.label}\n" for x in self.successor])
 
     def __eq__(self, other: 'DSADirectedGraphVertex') -> bool:
         return self.label == other.label
@@ -65,7 +79,8 @@ class DSADirectedGraph:
         """
         vertex1 = self.getVertex(label1)
         vertex2 = self.getVertex(label2)
-        vertex1.addEdge(vertex2)
+        vertex1.addSuccessor(vertex2)
+        vertex2.addPredecessor(vertex1)
 
     def hasVertex(self, label: object) -> bool:
         return self._verticies.find(DSADirectedGraphVertex(label, None))
@@ -74,17 +89,20 @@ class DSADirectedGraph:
         return self._verticies.count()
 
     def getEdgeCount(self) -> int:
-        return sum(x.adjacent.count() for x in self._verticies)
+        return sum(x.successor.count() for x in self._verticies)
 
     def getVertex(self, label: object) -> 'DSADirectedGraphVertex':
         # Use list internals for efficiency
         return self._verticies._find(DSADirectedGraphVertex(label, None))._data
 
-    def getAdjacent(self, label: object) -> 'DSALinkedList':
-        return self.getVertex(label).adjacent
+    def getSuccessor(self, label: object) -> 'DSALinkedList':
+        return self.getVertex(label).successor
 
-    def isAdjacent(self, label1: object, label2: object) -> bool:
-        return self.getVertex(label1).adjacent.find(DSADirectedGraphVertex(label2, None))
+    def getPredecessor(self, label: object) -> 'DSALinkedList':
+        return self.getVertex(label).predecessor
+
+    def isSuccessor(self, label1: object, label2: object) -> bool:
+        return self.getVertex(label1).successor.find(DSADirectedGraphVertex(label2, None))
 
     def displayAsList(self) -> str:
         return "".join(f"{x}\n" for x in self._verticies)
@@ -108,7 +126,7 @@ class DSADirectedGraph:
         mat = np.zeros([count, count], dtype=int)
         for i, v in enumerate(self._verticies):
             for j, l in enumerate(self._verticies):
-                mat[i][j] = 1 if v.adjacent.find(l) else 0
+                mat[i][j] = 1 if v.successor.find(l) else 0
         return mat
 
     def display(self) -> str:
@@ -228,11 +246,14 @@ class TestDSADirectedGraph(unittest.TestCase):
         graph.addVertex("world", "hello")
         graph.addVertex("yeah", "boi")
         graph.addEdge("hello", "world")
-        self.assertTrue(graph.isAdjacent("hello", "world"))
-        self.assertFalse(graph.isAdjacent("yeah", "world"))
-        self.assertFalse(graph.isAdjacent("world", "hello"))
+        self.assertTrue(graph.isSuccessor("hello", "world"))
+        self.assertFalse(graph.isSuccessor("yeah", "world"))
+        self.assertFalse(graph.isSuccessor("world", "hello"))
         graph.addEdge("hello", "yeah")
-        for x1, x2 in zip(graph.getAdjacent("hello"), ["yeah", "world"]):
+        graph.addEdge("world", "hello")
+        for x1, x2 in zip(graph.getSuccessor("hello"), ["yeah", "world"]):
+            self.assertEqual(x1.label, x2)
+        for x1, x2 in zip(graph.getPredecessor("hello"), ["world"]):
             self.assertEqual(x1.label, x2)
 
     def testEdgeCount(self):
@@ -319,7 +340,7 @@ class TestDSADirectedGraph(unittest.TestCase):
         graph.addEdge("F", "G")
         self.assertEqual(graph.displayAsMatrix(), readGraph.displayAsMatrix())
 
-    def testBFSandDFS(self):
+    def d_testBFSandDFS(self):
         graph1 = DSADirectedGraph.readGraphFile("3a.al")
         graph2 = DSADirectedGraph.readGraphFile("3b.al")
 
