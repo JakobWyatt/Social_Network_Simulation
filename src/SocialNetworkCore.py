@@ -1,16 +1,12 @@
 from typing import List
+from functools import total_ordering
 
 from ADT.DSADirectedGraph import DSADirectedGraph, DSADirectedGraphVertex
 from ADT.DSALinkedList import DSALinkedList, DSAListNode
-
+from ADT.DSAHeap import DSAHeap
+from ADT.DSAOrderedList import DSAOrderedList
 
 class SocialNetwork:
-    def __init__(self):
-        self._probLike = -1.0
-        self._probFollow = -1.0
-        self._network = DSADirectedGraph()
-        self._posts = DSALinkedList()
-
     def __init__(self, *, probLike=-1.0, probFollow=-1.0):
         if probLike == -1.0 and probFollow == -1.0:
             self._probLike = -1.0
@@ -19,7 +15,11 @@ class SocialNetwork:
             self.probLike = probLike
             self.probFollow = probFollow
         self._network = DSADirectedGraph()
+        # In order of posting
         self._posts = DSALinkedList()
+        # In order of likes - O(n) insertion, O(n) update (low), O(n) retrival
+        self._postLikes = DSAOrderedList()
+        self._currentPost = None
 
     @property
     def probLike(self) -> float:
@@ -55,7 +55,6 @@ class SocialNetwork:
         ...
 
     def addUser(self, user: str):
-        print(user)
         self._network.addVertex(user, None)
 
     def removeUser(self, user: str):
@@ -73,8 +72,8 @@ class SocialNetwork:
     def save(self) -> str:
         ...
 
-    def addPost(self, user: str, content: str) -> int:
-        ...
+    def addPost(self, user: str, content: str):
+        self._posts.insertFirst(SocialNetworkPost(user, content))
 
     def done(self) -> bool:
         return self._posts.count() == 0 or self._posts.peekFirst().done()
@@ -115,12 +114,11 @@ class SocialNetwork:
                 and self.done)
 
 
+@total_ordering
 class SocialNetworkPost:
-    def __init__(self, network: DSADirectedGraph, user: str, content: str, id: int):
-        self._network = network
+    def __init__(self, user: str, content: str):
         self._user = user
         self._content = content
-        self._id = id
 
     @property
     def user(self) -> str:
@@ -129,9 +127,6 @@ class SocialNetworkPost:
     @property
     def content(self) -> str:
         return self._content
-
-    def id(self) -> int:
-        return self._id
 
     def done(self) -> bool:
         ...
@@ -145,7 +140,14 @@ class SocialNetworkPost:
     def remove(self, user: str):
         ...
 
+    def __eq__(self, other):
+        return self is other
 
+    def __lt__(self, other):
+        return self.likes() < other.likes()
+
+
+@total_ordering
 class SocialNetworkUser:
     def __init__(self, vertex: DSADirectedGraphVertex, posts: DSALinkedList):
         self._vertex = vertex
@@ -163,3 +165,9 @@ class SocialNetworkUser:
 
     def name(self) -> str:
         return self._vertex.label
+
+    def __eq__(self, other):
+        return self is other
+
+    def __lt__(self, other):
+        return len(self.followers()) < len(other.followers())
