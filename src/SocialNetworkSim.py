@@ -56,20 +56,12 @@ class interactive(cmd.Cmd):
         self._network.removeUser(arg)
 
     def do_like(self, arg):
-        'Like a post: like <user>:<post_id>'
-        args = arg.split(':')
-        if len(args) == 2:
-            self._network.like(args[0], args[1])
-        else:
-            print("Invalid usage.")
+        'Like a post: like <user>'
+        self._network.like(arg)
 
     def do_unlike(self, arg):
-        "Unlike a post: unlike <user>:<post_id>"
-        args = arg.split(':')
-        if len(args) == 2:
-            self._network.unlike(args[0], args[1])
-        else:
-            print("Invalid usage.")
+        "Unlike a post: unlike <user>"
+        self._network.unlike(arg)
 
     def do_follow(self, arg):
         "Follow a user: follow <follower>:<followed>"
