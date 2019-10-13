@@ -1,5 +1,5 @@
 import typing
-from linkedLists import *
+from ADT.linkedLists import *
 
 class DSAListStack():
     def __init__(self):

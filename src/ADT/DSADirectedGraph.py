@@ -2,9 +2,9 @@ import unittest
 import typing
 import numpy as np
 
-from linkedLists import DSALinkedList
-from DSAListQueue import DSAListQueue
-from DSAListStack import DSAListStack
+from ADT.linkedLists import DSALinkedList
+from ADT.DSAListQueue import DSAListQueue
+from ADT.DSAListStack import DSAListStack
 
 
 class DSADirectedGraphVertex:

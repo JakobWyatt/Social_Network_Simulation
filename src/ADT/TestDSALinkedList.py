@@ -1,6 +1,6 @@
 import unittest
 import pickle
-from linkedLists import *
+from ADT.linkedLists import *
 
 class TestDSALinkedList(unittest.TestCase):
     def testConstructorIsEmpty(self):

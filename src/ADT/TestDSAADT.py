@@ -1,7 +1,7 @@
 import unittest
 from typing import Type
-from DSAListStack import DSAListStack
-from DSAListQueue import DSAListQueue
+from ADT.DSAListStack import DSAListStack
+from ADT.DSAListQueue import DSAListQueue
 
 class TestDSAADT(unittest.TestCase):
     def testDSAListStack(self):
