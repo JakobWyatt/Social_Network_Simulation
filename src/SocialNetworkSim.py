@@ -4,67 +4,136 @@ import sys
 # Interactive menu
 import cmd
 import readline
+# File interaction
+import os
+import errno
+
+# Simulation
+from SocialNetworkCore import SocialNetwork
 
 
 class interactive(cmd.Cmd):
     intro = "Type help or ? to list commands.\n"
     prompt = "(social-sim) "
 
+    def __init__(self):
+        super(interactive, self).__init__()
+        self._network = SocialNetwork()
+
     def do_load(self, arg):
         'Load a social network: load <netfile>'
-        print(arg)
+        try:
+            with open(arg, "r") as f:
+                self._network.loadNetwork()
+        except IOError as ioex:
+            print(f"File could not be read: {os.strerror(ioex.errno)}")
 
     def do_find_user(self, arg):
         'Find a user and display their posts, followers, and following: find_user <name>'
-        print(arg)
-
+        try:
+            user = self._network.findUser(arg)
+            print("#posts")
+            for x in user.posts():
+                print(f"id: {x.id}")
+                print(f"content: {x.content}")
+                print("liked:")
+                [print(y.name) for y in x.likes()]
+            print("#followers")
+            [print(x.name) for x in user.followers()]
+            print("#following")
+            [print(x.name) for x in user.following()]
+        except ValueError:
+            print("User does not exist.")
+        except TypeError:
+            print("Invalid usage.")
+        
     def do_add_user(self, arg):
         'Add a user: add_user <name>'
-        print(arg)
+        self._network.addUser(arg)
 
     def do_remove_user(self, arg):
         'Remove a user: remove_user <name>'
-        print(arg)
+        self._network.removeUser(arg)
 
     def do_like(self, arg):
         'Like a post: like <user>:<post_id>'
-        print(arg)
+        args = arg.split(':')
+        if len(args) == 2:
+            self._network.like(args[0], args[1])
+        else:
+            print("Invalid usage.")
 
     def do_unlike(self, arg):
         "Unlike a post: unlike <user>:<post_id>"
-        print(arg)
+        args = arg.split(':')
+        if len(args) == 2:
+            self._network.unlike(args[0], args[1])
+        else:
+            print("Invalid usage.")
 
     def do_follow(self, arg):
         "Follow a user: follow <follower>:<followed>"
-        print(arg)
+        args = arg.split(':')
+        if len(args) == 2:
+            self._network.follow(args[0], args[1])
+        else:
+            print("Invalid usage.")
 
     def do_unfollow(self, arg):
         "Unfollow a user: unfollow <follower>:<followed>"
-        print(arg)
+        args = arg.split(':')
+        if len(args) == 2:
+            self._network.unfollow(args[0], args[1])
+        else:
+            print("Invalid usage.")
 
     def do_prob(self, arg):
         'Set the probabilities of the social network: prob <prob_like> <prob_foll>'
-        print(arg)
+        args = arg.split()
+        if len(args) == 2:
+            self._network.probLike = args[0]
+            self._network.probFollow = args[1]
+        else:
+            print("Invalid usage.")
 
     def do_new_post(self, arg):
         'Create a new post: new_post <name>:<content>'
-        print(arg)
+        args = arg.split(':')
+        if len(args) == 2:
+            self._network.addPost(args[0], args[1])
+        else:
+            print("Invalid usage.")
 
     def do_display_network(self, arg):
         'Display the social network: display_network'
-        print("display_network")
+        self._network.display()
 
     def do_display_stats(self, arg):
         'Display social network statistics: display_stats'
-        print("display_stats")
+        print(self._network.optionalStats())
+
+    def do_popular_posts(self, arg):
+        'Display posts in order of popularity: popular_posts'
+        [print(f"user: {x.user}\ncontent: {x.content}\n likes: {len(x.likes)}\n") for x in self._network.popularPosts()]
+
+    def do_popular_users(self, arg):
+        'Display users in order of popularity: popular_users'
+        [print(f"user: {x.name}\nfollowers: {len(x.followers)}\n") for x in self._network.popularUsers()]
 
     def do_update(self, arg):
         'Run a timestep: update'
-        print("update")
+        try:
+            self._network.update()
+        except ValueError as vEx:
+            print(str(vEx))
 
     def do_save(self, arg):
         'Save the network: save <filename>'
-        print(arg)
+        try:
+            with open(arg, "f") as f:
+                f.write(self._network.save())
+        except IOError as ioex:
+            print(f"File could not be read: {os.strerror(ioex.errno)}")
 
     def do_exit(self, arg):
         'Exit the program: exit'
@@ -72,7 +141,32 @@ class interactive(cmd.Cmd):
 
 
 def simulation(netfile, eventfile, prob_like, prob_foll):
-    print("Simulation")
+    network = SocialNetwork(probLike=prob_like, probFollow=prob_foll)
+    network.loadNetwork(network)
+    events = [x.rstrip('\n') for x in eventfile]
+    # break not allowed
+    i = 0
+    error = False
+    from tempfile import NamedTemporaryFile
+    with NamedTemporaryFile(delete=False) as f:
+        while not error and i < len(events):
+            x = events[i].split(':')
+            if len(x) == 3:
+                if x[0] == "F":
+                    network.follow(x[1], x[2])
+                elif x[0] == "P":
+                    network.addPost(x[1], x[2])
+                    while not network.done():
+                        network.update()
+                        # Print statistics
+                        f.write(network.simstate())
+                else:
+                    error = True
+                    print("Invalid file format.")
+            else:
+                error = True
+                print("Invalid file format.")
+            i += 1
 
 
 def make_parser():
