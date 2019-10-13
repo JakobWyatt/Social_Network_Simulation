@@ -1,7 +1,7 @@
 from typing import List
 
 from ADT.DSADirectedGraph import DSADirectedGraph, DSADirectedGraphVertex
-from ADT.linkedLists import DSALinkedList, DSAListNode
+from ADT.DSALinkedList import DSALinkedList, DSAListNode
 
 
 class SocialNetwork:

@@ -2,7 +2,7 @@ import unittest
 import typing
 import numpy as np
 
-from ADT.linkedLists import DSALinkedList
+from ADT.DSALinkedList import DSALinkedList
 
 class DSADirectedGraphVertex:
     def __init__(self, label: object, value: object):
