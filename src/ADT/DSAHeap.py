@@ -1,19 +1,20 @@
 import unittest
 from typing import List, Tuple
+from copy import copy
 import numpy as np
 
 
 class DSAHeapEntry:
-    def __init__(self, priority: int, value: object):
+    def __init__(self, priority: object, value: object):
         self._priority = priority
         self._value = value
 
     @property
-    def priority(self) -> int:
+    def priority(self) -> object:
         return self._priority
         
     @priority.setter
-    def priority(self, p: int):
+    def priority(self, p: object):
         self._priority = p
 
     @property
@@ -33,7 +34,7 @@ class DSAHeap:
             self._heap[i] = DSAHeapEntry(None, None)
         self._count = 0
 
-    def add(self, priority: int, value: object):
+    def add(self, priority: object, value: object):
         if len(self) == len(self._heap):
             newHeap = np.zeros(int(len(self._heap) * self._resizeFactor), dtype=object)
             for i, x in enumerate(self._heap):
@@ -46,29 +47,39 @@ class DSAHeap:
         self._trickleUp(len(self))
         self._count += 1
 
-    def remove(self) -> object:
+    def remove(self) -> Tuple[object, object]:
         if len(self) == 0:
             raise ValueError("Heap is empty.")
+        priority = self._heap[0].priority
         value = self._heap[0].value
         self._count -= 1
         # Swap to conserve consistency of objects
         self._heap[0], self._heap[len(self)] = self._heap[len(self)], self._heap[0]
         self._trickleDown(0)
-        return value
+        return priority, value
+
+    def sort(self) -> List[Tuple[object, object]]:
+        ret = np.zeros(len(self), dtype=object)
+        tempHeap = copy(self)
+        for i, _ in enumerate(ret):
+            ret[i] = tempHeap.remove()
+        return ret
 
     def _heapify(self):
-        for i in reversed(range(int(len(self) / 2) - 1)):
+        for i in reversed(range(len(self) // 2)):
             self._trickleDown(i)
 
     def _heapSort(self):
         self._heapify()
+        size = len(self)
         for i in reversed(range(1, len(self))):
             self._heap[0], self._heap[i] = self._heap[i], self._heap[0]
             self._count -= 1
             self._trickleDown(0)
+        self._count = size
 
     @staticmethod
-    def heapSort(values: List[Tuple[int, object]]) -> List[Tuple[int, object]]:
+    def heapSort(values: List[Tuple[object, object]]) -> List[Tuple[object, object]]:
         heap = DSAHeap(len(values))
         for i in range(len(values)):
             heap._heap[i].priority = values[i][0]
@@ -119,30 +130,62 @@ class TestDSAHeap(unittest.TestCase):
         heap.add(-50, "neg50")
         heap.add(-51, "neg51")
         heap.add(50, "fifty")
-        self.assertEqual(heap.remove(), "fifty")
-        self.assertEqual(heap.remove(), "six")
-        self.assertEqual(heap.remove(), "five")
+        self.assertEqual(heap.remove(), (50, "fifty"))
+        self.assertEqual(heap.remove(), (6, "six"))
+        self.assertEqual(heap.remove(), (5, "five"))
         heap.add(100, "bignoi")
         heap.add(50, "fifty")
         heap.add(0, "zero")
         heap.add(-49, "neg49")
         heap.add(-51, "neg51")
-        self.assertEqual(heap.remove(), "bignoi")
-        self.assertEqual(heap.remove(), "fifty")
-        self.assertEqual(heap.remove(), "one")
-        self.assertEqual(heap.remove(), "zero")
-        self.assertEqual(heap.remove(), "zero")
-        self.assertEqual(heap.remove(), "negone")
-        self.assertEqual(heap.remove(), "neg49")
-        self.assertEqual(heap.remove(), "neg50")
-        self.assertEqual(heap.remove(), "neg51")
-        self.assertEqual(heap.remove(), "neg51")
+        self.assertEqual(heap.remove(), (100, "bignoi"))
+        self.assertEqual(heap.remove(), (50, "fifty"))
+        self.assertEqual(heap.remove(), (1, "one"))
+        self.assertEqual(heap.remove(), (0, "zero"))
+        self.assertEqual(heap.remove(), (0, "zero"))
+        self.assertEqual(heap.remove(), (-1, "negone"))
+        self.assertEqual(heap.remove(), (-49, "neg49"))
+        self.assertEqual(heap.remove(), (-50, "neg50"))
+        self.assertEqual(heap.remove(), (-51, "neg51"))
+        self.assertEqual(heap.remove(), (-51, "neg51"))
 
     def testHeapSort(self):
         with open("RandomNames7000.csv", "r") as f:
             student = [x.rstrip("\n").split(",") for x in f]
             for x1, x2 in zip(sorted(student), DSAHeap.heapSort(student)):
                 self.assertEqual(x1[0], x2[0])
+
+    def testHeapify(self):
+        from functools import total_ordering
+        @total_ordering
+        class testPriority:
+            def __init__(self, priority: int):
+                self._priority = priority
+
+            @property
+            def priority(self):
+                return self._priority
+
+            @priority.setter
+            def priority(self, priority: int):
+                self._priority = priority
+
+            def __eq__(self, other):
+                return self.priority == other.priority
+
+            def __lt__(self, other):
+                return self.priority < other.priority
+
+        heap = DSAHeap()
+        vals = [testPriority(x) for x in range(5)]
+        [heap.add(x, None) for x in vals]
+        expected = [-3, -5, 50, 3, 1]
+        for i, x in enumerate(expected):
+            vals[i].priority = x
+        heap._heapify()
+        sortedHeap = heap.sort()
+        for x, y in zip([50, 3, 1, -3, -5], sortedHeap):
+            self.assertEqual(x, y[0].priority)
 
 
 if __name__ == "__main__":
