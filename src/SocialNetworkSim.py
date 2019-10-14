@@ -49,7 +49,10 @@ class interactive(cmd.Cmd):
         
     def do_add_user(self, arg):
         'Add a user: add_user <name>'
-        self._network.addUser(arg)
+        try:
+            self._network.addUser(arg)
+        except ValueError as ex:
+            print(str(ex))
 
     def do_remove_user(self, arg):
         'Remove a user: remove_user <name>'
@@ -67,7 +70,10 @@ class interactive(cmd.Cmd):
         "Follow a user: follow <follower>:<followed>"
         args = arg.split(':')
         if len(args) == 2:
-            self._network.follow(args[0], args[1])
+            try:
+                self._network.follow(args[0], args[1])
+            except ValueError:
+                print("User does not exist.")
         else:
             print("Invalid usage.")
 
@@ -75,7 +81,10 @@ class interactive(cmd.Cmd):
         "Unfollow a user: unfollow <follower>:<followed>"
         args = arg.split(':')
         if len(args) == 2:
-            self._network.unfollow(args[0], args[1])
+            try:
+                self._network.unfollow(args[0], args[1])
+            except ValueError:
+                print("User does not exist.")
         else:
             print("Invalid usage.")
 
@@ -83,8 +92,11 @@ class interactive(cmd.Cmd):
         'Set the probabilities of the social network: prob <prob_like> <prob_foll>'
         args = arg.split()
         if len(args) == 2:
-            self._network.probLike = args[0]
-            self._network.probFollow = args[1]
+            try:
+                self._network.probLike = args[0]
+                self._network.probFollow = args[1]
+            except ValueError as ex:
+                print(str(ex))
         else:
             print("Invalid usage.")
 
@@ -92,7 +104,10 @@ class interactive(cmd.Cmd):
         'Create a new post: new_post <name>:<content>'
         args = arg.split(':')
         if len(args) == 2:
-            self._network.addPost(args[0], args[1])
+            try:
+                self._network.addPost(args[0], args[1])
+            except ValueError as ex:
+                print("User does not exist.")
         else:
             print("Invalid usage.")
 

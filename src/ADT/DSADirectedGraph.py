@@ -79,18 +79,12 @@ class DSADirectedGraph:
         self._verticies.remove(vertex)
 
     def addEdge(self, label1: object, label2: object) -> None:
-        """
-        Assumes that the nodes already exist.
-        """
         vertex1 = self.getVertex(label1)
         vertex2 = self.getVertex(label2)
         vertex1.addSuccessor(vertex2)
         vertex2.addPredecessor(vertex1)
 
     def removeEdge(self, label1: object, label2: object) -> None:
-        """
-        Assumes that the nodes already exist.
-        """
         vertex1 = self.getVertex(label1)
         vertex2 = self.getVertex(label2)
         vertex1.removeSuccessor(vertex2)
@@ -107,7 +101,10 @@ class DSADirectedGraph:
 
     def getVertex(self, label: object) -> 'DSADirectedGraphVertex':
         # Use list internals for efficiency
-        return self._verticies._find(DSADirectedGraphVertex(label, None))._data
+        vertex = self._verticies._find(DSADirectedGraphVertex(label, None))
+        if vertex is None:
+            raise ValueError("Vertex does not exist.")
+        return vertex._data
 
     def getSuccessor(self, label: object) -> 'DSALinkedList':
         return self.getVertex(label).successor

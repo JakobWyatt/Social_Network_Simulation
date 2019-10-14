@@ -52,6 +52,8 @@ class SocialNetwork:
         ...
 
     def addUser(self, user: str):
+        if self._network.hasVertex(user):
+            raise ValueError("User already exists.")
         self._network.addVertex(user, None)
 
     def removeUser(self, user: str):
