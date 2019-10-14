@@ -12,6 +12,8 @@ class DSALinkedList:
     def __init__(self):
         self._head = None
         self._tail = None
+        # Cached count
+        self._count = 0
 
     def _insert(self, item: object, after: 'DSAListNode'):
         if after == None:
@@ -29,6 +31,7 @@ class DSALinkedList:
                 self._head = node
             else:
                 node._prev._next = node
+        self._count += 1
         
     def _remove(self, item: 'DSAListNode') -> object:
         if item is self._head:
@@ -40,6 +43,7 @@ class DSALinkedList:
             self._tail = item._prev
         else:
             item._next._prev = item._prev
+        self._count -= 1
         return item._data
         
     def _find(self, item: object) -> 'DSAListNode':
@@ -92,9 +96,8 @@ class DSALinkedList:
     def find(self, item: object) -> bool:
         return self._find(item) != None
 
-    def count(self) -> int:
-        return sum(1 for _ in self)
-
+    def __len__(self) -> int:
+        return self._count
 
 
 class TestDSALinkedList(unittest.TestCase):
