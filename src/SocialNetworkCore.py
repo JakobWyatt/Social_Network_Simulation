@@ -15,11 +15,8 @@ class SocialNetwork:
             self.probLike = probLike
             self.probFollow = probFollow
         self._network = DSADirectedGraph()
-        # In order of posting
         self._posts = DSALinkedList()
-        # In order of likes - O(n) insertion, O(n) update (low), O(n) retrival
-        self._postLikes = DSAOrderedList()
-        self._currentPost = None
+        self._postLikes = DSAHeap()
 
     @property
     def probLike(self) -> float:
@@ -61,7 +58,7 @@ class SocialNetwork:
         ...
 
     def findUser(self, user: str) -> 'SocialNetworkUser':
-        ...
+        return SocialNetworkUser(self._network.getVertex(user))
 
     def display(self):
         self._network.render()
@@ -72,8 +69,11 @@ class SocialNetwork:
     def save(self) -> str:
         ...
 
-    def addPost(self, user: str, content: str):
+    def addPost(self, userName: str, content: str):
+        user = self.findUser(userName)
         self._posts.insertFirst(SocialNetworkPost(user, content))
+        self._postLikes.add(self._posts.peekFirst(), None)
+        user.addPost(self._posts.peekFirst())
 
     def done(self) -> bool:
         return self._posts.count() == 0 or self._posts.peekFirst().done()
@@ -95,7 +95,8 @@ class SocialNetwork:
         return ""
 
     def popularPosts(self) -> List['SocialNetworkPost']:
-        ...
+        self._postLikes._heapify()
+        return [x[0] for x in self._postLikes.sort()]
 
     def popularUsers(self) -> List['SocialNetworkUser']:
         ...
@@ -116,13 +117,15 @@ class SocialNetwork:
 
 @total_ordering
 class SocialNetworkPost:
-    def __init__(self, user: str, content: str):
-        self._user = user
+    def __init__(self, user: 'SocialNetworkUser', content: str):
+        self._liked = DSALinkedList()
+        self._liked.insertFirst(user)
+        # Inclusive range from start to endRecentlyLiked
+        self._endRecentlyLiked = user
         self._content = content
 
-    @property
-    def user(self) -> str:
-        return self._user
+    def user(self) -> 'SocialNetworkUser':
+        return self._liked.peekLast()
 
     @property
     def content(self) -> str:
@@ -134,8 +137,9 @@ class SocialNetworkPost:
     def save(self) -> str:
         ...
 
-    def likes(self) -> List['SocialNetworkUser']:
-        ...
+    @property
+    def liked(self) -> DSALinkedList:
+        return self._liked
 
     def remove(self, user: str):
         ...
@@ -144,20 +148,22 @@ class SocialNetworkPost:
         return self is other
 
     def __lt__(self, other):
-        return self.likes() < other.likes()
+        return len(self.liked) < len(other.liked)
 
 
 @total_ordering
 class SocialNetworkUser:
-    def __init__(self, vertex: DSADirectedGraphVertex, posts: DSALinkedList):
+    def __init__(self, vertex: DSADirectedGraphVertex):
         self._vertex = vertex
-        self._posts = posts
+        self._posts = DSALinkedList()
 
     def posts(self) -> List['SocialNetworkPost']:
         ...
 
+    def addPost(self, post: 'SocialNetworkPost'):
+        self._posts.insertFirst(post)
+
     def followers(self) -> List['SocialNetworkUser']:
-        # Requires caching of followers in DSADirectedGraph
         ...
 
     def following(self) -> List['SocialNetworkUser']:
