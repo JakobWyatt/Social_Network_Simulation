@@ -101,8 +101,8 @@ class interactive(cmd.Cmd):
         args = arg.split()
         if len(args) == 2:
             try:
-                self._network.probLike = args[0]
-                self._network.probFollow = args[1]
+                self._network.probLike = float(args[0])
+                self._network.probFollow = float(args[1])
             except ValueError as ex:
                 print(str(ex))
         else:

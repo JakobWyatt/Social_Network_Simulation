@@ -2,6 +2,8 @@ from typing import List
 from functools import total_ordering
 import unittest
 
+from numpy.random import binomial
+
 from ADT.DSADirectedGraph import DSADirectedGraph, DSADirectedGraphVertex
 from ADT.DSALinkedList import DSALinkedList, DSAListNode
 from ADT.DSAHeap import DSAHeap
@@ -29,7 +31,7 @@ class SocialNetwork:
     @probLike.setter
     def probLike(self, prob: float):
         SocialNetwork._checkProb(prob)
-        self.probLike = prob
+        self._probLike = prob
 
     @property
     def probFollow(self) -> float:
@@ -38,7 +40,7 @@ class SocialNetwork:
     @probFollow.setter
     def probFollow(self, prob: float):
         SocialNetwork._checkProb(prob)
-        self.probFollow = prob
+        self._probFollow = prob
 
     def loadNetwork(self, file):
         # Remove existing network and posts
@@ -59,6 +61,8 @@ class SocialNetwork:
     def follow(self, follower: str, followed: str):
         if follower == followed:
             raise ValueError("User cannot follow themselves.")
+        if self._network.hasEdge(follower, followed):
+            raise ValueError(f"{follower} is already following {followed}.")
         try:
             self._network.addEdge(follower, followed)
         except ValueError as e:
@@ -128,7 +132,7 @@ class SocialNetwork:
     def addPost(self, userName: str, content: str):
         try:
             user = self.findUser(userName)
-            self._posts.insertFirst(SocialNetworkPost(user, content))
+            self._posts.insertFirst(SocialNetworkPost(user, content, self))
             self._postLikes.add(self._posts.peekFirst(), None)
             user.addPost(self._posts.peekFirst())
         except ValueError as e:
@@ -177,11 +181,12 @@ class SocialNetwork:
 
 @total_ordering
 class SocialNetworkPost:
-    def __init__(self, user: 'SocialNetworkUser', content: str):
+    def __init__(self, user: 'SocialNetworkUser', content: str, network: 'SocialNetwork'):
         self._recentlyLiked = DSALinkedList()
         self._liked = DSALinkedList()
         self._recentlyLiked.insertFirst(user)
         self._content = content
+        self._network = network
 
     def user(self) -> 'SocialNetworkUser':
         if len(self._liked) == 0:
@@ -191,6 +196,8 @@ class SocialNetworkPost:
         return user
 
     def like(self, user: 'SocialNetworkUser'):
+        if self._recentlyLiked.find(user) or self._liked.find(user):
+            raise ValueError("User has already liked post.")
         self._recentlyLiked.insertFirst(user)
 
     def unlike(self, user: 'SocialNetworkUser'):
@@ -212,15 +219,24 @@ class SocialNetworkPost:
 
     def update(self) -> str:
         # The core of the algorithm. (Finally!)
-        # Keep track of the original head of the list,
-        # which will be the first element that has already been evaluated.
-        # New likers are added to the list.
-        # Some list internals will be used here to more effectively split
-        # the list into parts.
-        head = self._liked._head
-        # Temporarily make an exclusive range at the end for ease of comparison
-        
+        newLikes = DSALinkedList()
+        for x in self._recentlyLiked:
+            for user in x.followers():
+                # Does the user like the post?
+                if binomial(1, self._network.probLike) == 1:
+                    if not self._liked.find(user) and not self._recentlyLiked.find(user):
+                        newLikes.insertFirst(user)
+                    # Does the user follow the original poster?
+                    if binomial(1, self._network.probFollow) == 1:
+                        try:
+                            self._network.follow(user.name(), self.user().name())
+                        except ValueError:
+                            pass
+        self._liked = self._recentlyLiked.concat(self._liked)
+        self._recentlyLiked = newLikes
+
     def liked(self) -> DSALinkedList:
+        # Probably not working
         from copy import copy
         return copy(self._recentlyLiked).concat(copy(self._liked))
 

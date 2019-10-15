@@ -84,6 +84,9 @@ class DSADirectedGraph:
         vertex1.addSuccessor(vertex2)
         vertex2.addPredecessor(vertex1)
 
+    def hasEdge(self, label1: object, label2: object) -> None:
+        return self.getVertex(label1).successor.find(DSADirectedGraphVertex(label2, None))
+
     def removeEdge(self, label1: object, label2: object) -> None:
         vertex1 = self.getVertex(label1)
         vertex2 = self.getVertex(label2)
@@ -94,10 +97,10 @@ class DSADirectedGraph:
         return self._verticies.find(DSADirectedGraphVertex(label, None))
 
     def getVertexCount(self) -> int:
-        return self._verticies.count()
+        return len(self._verticies)
 
     def getEdgeCount(self) -> int:
-        return sum(x.successor.count() for x in self._verticies)
+        return sum(len(x.successor) for x in self._verticies)
 
     def getVertex(self, label: object) -> 'DSADirectedGraphVertex':
         # Use list internals for efficiency
