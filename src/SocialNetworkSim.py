@@ -38,7 +38,7 @@ class interactive(cmd.Cmd):
             for x in user.posts:
                 print(f"content: {x.content}")
                 print("liked:")
-                [print(y.name()) for y in x.liked]
+                [print(y.name()) for y in x.liked()]
             print("#followers")
             [print(x.name()) for x in user.followers()]
             print("#following")
@@ -129,7 +129,7 @@ class interactive(cmd.Cmd):
 
     def do_popular_posts(self, arg):
         'Display posts in order of popularity: popular_posts'
-        [print(f"user: {x.user().name()}\ncontent: {x.content}\nlikes: {len(x.liked)}\n") for x in self._network.popularPosts()]
+        [print(f"user: {x.user().name()}\ncontent: {x.content}\nlikes: {len(x.liked())}\n") for x in self._network.popularPosts()]
 
     def do_popular_users(self, arg):
         'Display users in order of popularity: popular_users'

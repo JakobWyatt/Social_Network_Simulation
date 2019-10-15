@@ -178,44 +178,58 @@ class SocialNetwork:
 @total_ordering
 class SocialNetworkPost:
     def __init__(self, user: 'SocialNetworkUser', content: str):
+        self._recentlyLiked = DSALinkedList()
         self._liked = DSALinkedList()
-        self._liked.insertFirst(user)
-        # Inclusive range from start to endRecentlyLiked
-        self._endRecentlyLiked = user
+        self._recentlyLiked.insertFirst(user)
         self._content = content
 
     def user(self) -> 'SocialNetworkUser':
-        return self._liked.peekLast()
+        if len(self._liked) == 0:
+            user = self._recentlyLiked.peekLast()
+        else:
+            user = self._liked.peekLast()
+        return user
 
     def like(self, user: 'SocialNetworkUser'):
-        self._liked.insertFirst(user)
+        self._recentlyLiked.insertFirst(user)
 
     def unlike(self, user: 'SocialNetworkUser'):
-        return self._liked.remove(user)
+        ret = self._liked.remove(user)
+        if ret is None:
+            ret = self._recentlyLiked.remove(user)
+        return ret
 
     @property
     def content(self) -> str:
         return self._content
 
     def done(self) -> bool:
-        ...
+        return len(self._recentlyLiked) == 0
         
     def save(self) -> str:
-        return (f"content: {self.content}\nuser: {self._liked.peekLast().name()}\n"
-                + '\n'.join([x.name() for x in self.liked]) + '\n')
+        return (f"content: {self.content}\nuser: {self.user().name()}\n"
+                + '\n'.join([x.name() for x in self.liked()]) + '\n')
 
     def update(self) -> str:
-        ...
-
-    @property
+        # The core of the algorithm. (Finally!)
+        # Keep track of the original head of the list,
+        # which will be the first element that has already been evaluated.
+        # New likers are added to the list.
+        # Some list internals will be used here to more effectively split
+        # the list into parts.
+        head = self._liked._head
+        # Temporarily make an exclusive range at the end for ease of comparison
+        
     def liked(self) -> DSALinkedList:
-        return self._liked
+        from copy import copy
+        return copy(self._recentlyLiked).concat(copy(self._liked))
 
     def __eq__(self, other):
         return self is other
 
     def __lt__(self, other):
-        return len(self.liked) < len(other.liked)
+        return (len(self._liked) + len(self._recentlyLiked)
+                < len(other._recentlyLiked) + len(other._liked))
 
 
 @total_ordering

@@ -101,6 +101,14 @@ class DSALinkedList:
     def __len__(self) -> int:
         return self._count
 
+    def concat(self, l: 'DSALinkedList'):
+        if self._tail is not None:
+            self._tail._next = l._head
+        if l._head is not None:
+            l._head._prev = self._tail
+        self._count += len(l)
+        return self
+
 
 class TestDSALinkedList(unittest.TestCase):
     def testConstructorIsEmpty(self):
@@ -165,6 +173,11 @@ class TestDSALinkedList(unittest.TestCase):
             gherkin = pickle.load(f)
         for x1, x2 in zip(gherkin, cucumber):
             self.assertEqual(x1, x2)
+
+    def testConcat(self):
+        l1 = DSALinkedList()
+        l2 = DSALinkedList()
+
 
 if __name__ == "__main__":
     unittest.main()
