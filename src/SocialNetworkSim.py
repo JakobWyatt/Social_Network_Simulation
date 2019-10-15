@@ -24,7 +24,7 @@ class interactive(cmd.Cmd):
         'Load a social network: load <netfile>'
         try:
             with open(arg, "r") as f:
-                self._network.loadNetwork()
+                self._network.loadNetwork(f)
         except IOError as ioex:
             print(f"File could not be read: {os.strerror(ioex.errno)}")
         except ValueError as vEx:

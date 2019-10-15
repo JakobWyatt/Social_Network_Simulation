@@ -132,6 +132,13 @@ class DSADirectedGraph:
             matStr += "\n"
         return matStr
 
+    def displayExploded(self) -> str:
+        first = "".join([f"{x.label}\n" for x in reversed(self._verticies)])
+        second = ""
+        for x in reversed(self._verticies):
+            second = second + "".join([f"{x.label}:{f.label}\n" for f in reversed(x.successor)])
+        return first + second
+
     def adjacencyMatrix(self):
         count = self.getVertexCount()
         mat = np.zeros([count, count], dtype=int)

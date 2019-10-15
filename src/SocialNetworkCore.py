@@ -40,7 +40,20 @@ class SocialNetwork:
         self.probFollow = prob
 
     def loadNetwork(self, file):
-        ...
+        # Remove existing network and posts
+        self._network = DSADirectedGraph()
+        self._posts = DSALinkedList()
+        self._postLikes = DSAHeap()
+        for x in file:
+            formatted = x.rstrip('\n').split(':')
+            if len(formatted) == 1:
+                # Add user
+                self.addUser(formatted[0])
+            elif len(formatted) == 2:
+                # Add follow
+                self.follow(formatted[0], formatted[1])
+            else:
+                raise ValueError("Invalid file.")
 
     def follow(self, follower: str, followed: str):
         try:
@@ -105,7 +118,7 @@ class SocialNetwork:
             raise ValueError("Network cannot be updated.")
 
     def save(self) -> str:
-        ...
+        return self._network.displayExploded()
 
     def addPost(self, userName: str, content: str):
         try:
@@ -318,6 +331,14 @@ class SocialNetworkTest(unittest.TestCase):
         network.addPost("Jakob", "meme")
         for x1, x2 in zip(network.popularPosts(), ["bad content", "In bali atm", "meme"]):
             self.assertEqual(x2, x1.content)
+
+    def testLoadSave(self):
+        network = SocialNetwork()
+        with open("../example/network_file.txt", "r") as f:
+            network.loadNetwork(f)
+            f.seek(0)
+            for x1, x2 in zip(f, network.save().split('\n')):
+                self.assertEqual(x1.rstrip('\n'), x2)
 
 
 if __name__ == "__main__":
