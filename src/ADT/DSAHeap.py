@@ -18,11 +18,11 @@ class DSAHeapEntry:
         self._priority = p
 
     @property
-    def value(self) -> int:
+    def value(self) -> object:
         return self._value
         
     @value.setter
-    def value(self, p: int):
+    def value(self, p: object):
         self._value = p
 
 
@@ -57,6 +57,23 @@ class DSAHeap:
         self._heap[0], self._heap[len(self)] = self._heap[len(self)], self._heap[0]
         self._trickleDown(0)
         return priority, value
+
+    def removeArbitrary(self, item: object):
+        # Interesting algorithm here.
+        # First, the object to be removed must be found.
+        i = 0
+        found = False
+        while i < len(self) and not found:
+            found = self._heap[i].priority == item
+            i += 1
+        i -= 1
+        if not found:
+            raise ValueError("Element was not found.")
+        # Next, swap it with the rightmost element.
+        self._count -= 1
+        self._heap[i], self._heap[len(self)] = self._heap[len(self)], self._heap[i]
+        # Finally, trickle down this element
+        self._trickleDown(i)
 
     def sort(self) -> List[Tuple[object, object]]:
         ret = np.zeros(len(self), dtype=object)
@@ -187,6 +204,24 @@ class TestDSAHeap(unittest.TestCase):
         for x, y in zip([50, 3, 1, -3, -5], sortedHeap):
             self.assertEqual(x, y[0].priority)
 
+    def testRemoveArbitrary(self):
+        heap = DSAHeap()
+        heap.add(5, "five")
+        heap.add(6, "six")
+        heap.add(-1, "negone")
+        heap.add(0, "zero")
+        heap.add(1, "one")
+        heap.add(-50, "neg50")
+        heap.add(-51, "neg51")
+        heap.add(50, "fifty")
+        heap.removeArbitrary(-1)
+        heap.removeArbitrary(50)
+        heap.removeArbitrary(6)
+        heap.removeArbitrary(-51)
+        heap.removeArbitrary(-50)
+        self.assertEqual(heap.remove(), (5, "five"))
+        self.assertEqual(heap.remove(), (1, "one"))
+        self.assertEqual(heap.remove(), (0, "zero"))
 
 if __name__ == "__main__":
     unittest.main()
