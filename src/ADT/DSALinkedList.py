@@ -177,6 +177,14 @@ class TestDSALinkedList(unittest.TestCase):
     def testConcat(self):
         l1 = DSALinkedList()
         l2 = DSALinkedList()
+        l2.insertLast(1)
+        l2.insertLast(2)
+        l2.insertLast(3)
+        l2.insertLast(4)
+        l1.insertFirst(-1)
+        l1.insertLast(0)
+        for x1, x2 in zip(l1.concat(l2), range(-1, 5)):
+            self.assertEqual(x1, x2)
 
 
 if __name__ == "__main__":
