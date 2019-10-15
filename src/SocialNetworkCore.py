@@ -4,7 +4,6 @@ from functools import total_ordering
 from ADT.DSADirectedGraph import DSADirectedGraph, DSADirectedGraphVertex
 from ADT.DSALinkedList import DSALinkedList, DSAListNode
 from ADT.DSAHeap import DSAHeap
-from ADT.DSAOrderedList import DSAOrderedList
 
 class SocialNetwork:
     def __init__(self, *, probLike=-1.0, probFollow=-1.0):
@@ -45,16 +44,17 @@ class SocialNetwork:
     def unfollow(self, follower: str, followed: str):
         ...
 
-    def like(self, user: str, postId: int):
+    def like(self, user: str):
         ...
 
-    def unlike(self, user: str, postId: int):
+    def unlike(self, user: str):
         ...
 
     def addUser(self, user: str):
         if self._network.hasVertex(user):
             raise ValueError("User already exists.")
-        self._network.addVertex(user, None)
+        # Value is cached posts
+        self._network.addVertex(user, DSALinkedList())
 
     def removeUser(self, user: str):
         ...
@@ -157,19 +157,19 @@ class SocialNetworkPost:
 class SocialNetworkUser:
     def __init__(self, vertex: DSADirectedGraphVertex):
         self._vertex = vertex
-        self._posts = DSALinkedList()
 
-    def posts(self) -> List['SocialNetworkPost']:
-        ...
+    @property
+    def posts(self) -> DSALinkedList:
+        return self._vertex.value
 
     def addPost(self, post: 'SocialNetworkPost'):
-        self._posts.insertFirst(post)
+        self._vertex.value.insertFirst(post)
 
     def followers(self) -> List['SocialNetworkUser']:
-        ...
+        return [SocialNetworkUser(x) for x in self._vertex.predecessor]
 
     def following(self) -> List['SocialNetworkUser']:
-        ...
+        return [SocialNetworkUser(x) for x in self._vertex.successor]
 
     def name(self) -> str:
         return self._vertex.label

@@ -33,15 +33,14 @@ class interactive(cmd.Cmd):
         try:
             user = self._network.findUser(arg)
             print("#posts")
-            for x in user.posts():
-                print(f"id: {x.id}")
+            for x in user.posts:
                 print(f"content: {x.content}")
                 print("liked:")
-                [print(y.name) for y in x.likes()]
+                [print(y.name()) for y in x.liked]
             print("#followers")
-            [print(x.name) for x in user.followers()]
+            [print(x.name()) for x in user.followers()]
             print("#following")
-            [print(x.name) for x in user.following()]
+            [print(x.name()) for x in user.following()]
         except ValueError:
             print("User does not exist.")
         except TypeError:
