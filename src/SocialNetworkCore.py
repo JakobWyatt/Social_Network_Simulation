@@ -141,7 +141,7 @@ class SocialNetwork:
             Network representation, most recent post representation,
             and optional statistics.
         """
-        return f"{self.save()}\n{self._posts.peekFirst().save()}\n{self.optionalStats()}"
+        return f"{self.save()}\n{self._posts.peekFirst().save()}\n{self.optionalStats()}\n"
 
     def optionalStats(self) -> str:
         """Outputs optional statistics about the network.
@@ -195,7 +195,8 @@ class SocialNetworkPost:
         ...
         
     def save(self) -> str:
-        ...
+        return (f"content: {self.content}\nuser: {self._liked.peekLast().name()}\n"
+                + '\n'.join([x.name() for x in self.liked]) + '\n')
 
     def update(self) -> str:
         ...
@@ -332,13 +333,28 @@ class SocialNetworkTest(unittest.TestCase):
         for x1, x2 in zip(network.popularPosts(), ["bad content", "In bali atm", "meme"]):
             self.assertEqual(x2, x1.content)
 
-    def testLoadSave(self):
+    def testLoadSaveNetwork(self):
         network = SocialNetwork()
         with open("../example/network_file.txt", "r") as f:
             network.loadNetwork(f)
             f.seek(0)
             for x1, x2 in zip(f, network.save().split('\n')):
                 self.assertEqual(x1.rstrip('\n'), x2)
+
+    def testSavePost(self):
+        network = SocialNetwork()
+        network.addUser("Jakob")
+        network.addUser("bruh")
+        network.addUser("moment")
+        network.addPost("Jakob", "Wow content")
+        network.like("bruh")
+        network.like("moment")
+        self.assertEqual(network._posts.peekFirst().save(),
+                         ("content: Wow content\n"
+                          "user: Jakob\n"
+                          "moment\n"
+                          "bruh\n"
+                          "Jakob\n"))
 
 
 if __name__ == "__main__":
