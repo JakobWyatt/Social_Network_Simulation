@@ -133,7 +133,7 @@ class interactive(cmd.Cmd):
 
     def do_popular_users(self, arg):
         'Display users in order of popularity: popular_users'
-        [print(f"user: {x.name}\nfollowers: {len(x.followers())}\n") for x in self._network.popularUsers()]
+        [print(f"user: {x.name()}\nfollowers: {len(x.followers())}\n") for x in self._network.popularUsers()]
 
     def do_update(self, arg):
         'Run a timestep: update'

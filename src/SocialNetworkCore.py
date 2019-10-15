@@ -18,6 +18,7 @@ class SocialNetwork:
             self.probLike = probLike
             self.probFollow = probFollow
         self._network = DSADirectedGraph()
+        self._mostFollowed = DSAHeap()
         self._posts = DSALinkedList()
         self._postLikes = DSAHeap()
 
@@ -56,6 +57,8 @@ class SocialNetwork:
                 raise ValueError("Invalid file.")
 
     def follow(self, follower: str, followed: str):
+        if follower == followed:
+            raise ValueError("User cannot follow themselves.")
         try:
             self._network.addEdge(follower, followed)
         except ValueError as e:
@@ -93,9 +96,11 @@ class SocialNetwork:
             raise ValueError("User already exists.")
         # Value is cached posts
         self._network.addVertex(user, DSALinkedList())
+        self._mostFollowed.add(self.findUser(user), None)
 
     def removeUser(self, user: str):
         try:
+            self._mostFollowed.removeArbitrary(self.findUser(user))
             self._network.removeVertex(user)
         except ValueError as e:
             raise ValueError(SocialNetwork.USER_NOT_EXIST) from e
@@ -153,7 +158,8 @@ class SocialNetwork:
         return [x[0] for x in self._postLikes.sort()]
 
     def popularUsers(self) -> List['SocialNetworkUser']:
-        ...
+        self._mostFollowed._heapify()
+        return [x[0] for x in self._mostFollowed.sort()]
 
     # Private methods
 
@@ -355,6 +361,33 @@ class SocialNetworkTest(unittest.TestCase):
                           "moment\n"
                           "bruh\n"
                           "Jakob\n"))
+
+    def testPopularUser(self):
+        network = SocialNetwork()
+        network.addUser("a")
+        network.addUser("b")
+        network.addUser("c")
+        network.addUser("d")
+        network.addUser("e")
+        network.follow("b", "a")
+        network.follow("c", "a")
+        network.follow("d", "a")
+        network.follow("e", "a")
+        network.follow("c", "b")
+        network.follow("d", "b")
+        network.follow("e", "b")
+        network.follow("d", "c")
+        network.follow("e", "c")
+        network.follow("e", "d")
+        for x1, x2 in zip(network.popularUsers(), ["a", "b", "c", "d", "e"]):
+            self.assertEqual(x1.name(), x2)
+        network.removeUser("a")
+        network.removeUser("e")
+        network.removeUser("c")
+        network.unfollow("d", "b")
+        network.follow("b", "d")
+        for x1, x2 in zip(network.popularUsers(), ['d', 'b']):
+            self.assertEqual(x1.name(), x2)
 
 
 if __name__ == "__main__":
