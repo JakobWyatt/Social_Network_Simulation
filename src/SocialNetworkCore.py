@@ -87,10 +87,10 @@ class SocialNetwork:
         except ValueError as e:
             raise ValueError(SocialNetwork.USER_NOT_EXIST) from e
 
-    def findUser(self, user: str) -> 'SocialNetworkUser':
+    def findUser(self, userName: str) -> 'SocialNetworkUser':
         user = None
         try:
-            user = SocialNetworkUser(self._network.getVertex(user))
+            user = SocialNetworkUser(self._network.getVertex(userName))
         except ValueError as e:
             raise ValueError(SocialNetwork.USER_NOT_EXIST) from e
         return user
@@ -239,8 +239,8 @@ class SocialNetworkTest(unittest.TestCase):
         user = network.findUser("Jakob Wyatt")
         beach = network.findUser("beach")
         self.assertRaises(ValueError, network.findUser, "byte")
-        self.assertEqual(user.name == "Jakob Wyatt")
-        self.assertEqual(beach.name == "beach")
+        self.assertEqual(user.name(), "Jakob Wyatt")
+        self.assertEqual(beach.name(), "beach")
 
     def testFollow(self):
         network = SocialNetwork()
@@ -300,10 +300,10 @@ class SocialNetworkTest(unittest.TestCase):
         network = SocialNetwork()
         network.addUser("Jakob")
         network.addPost("Jakob", "In bali atm")
-        jakob = network.findUser("jakob")
-        self.assertEqual(len(jakob.posts()), 1)
+        jakob = network.findUser("Jakob")
+        self.assertEqual(len(jakob.posts), 1)
         network.addPost("Jakob", "Generic Meme")
-        self.assertEqual(len(jakob.posts()), 2)
+        self.assertEqual(len(jakob.posts), 2)
 
     def testLike(self):
         ...
@@ -313,7 +313,4 @@ class SocialNetworkTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    network = SocialNetwork()
-    network.addUser("jakob")
-    network.addPost("jakob", "hello")
-    # unittest.main()
+    unittest.main()
