@@ -27,6 +27,8 @@ class interactive(cmd.Cmd):
                 self._network.loadNetwork()
         except IOError as ioex:
             print(f"File could not be read: {os.strerror(ioex.errno)}")
+        except ValueError as vEx:
+            print(str(vEx))
 
     def do_find_user(self, arg):
         'Find a user and display their posts, followers, and following: find_user <name>'
@@ -41,10 +43,8 @@ class interactive(cmd.Cmd):
             [print(x.name()) for x in user.followers()]
             print("#following")
             [print(x.name()) for x in user.following()]
-        except ValueError:
-            print("User does not exist.")
-        except TypeError:
-            print("Invalid usage.")
+        except ValueError as ex:
+            print(str(ex))
         
     def do_add_user(self, arg):
         'Add a user: add_user <name>'
@@ -55,15 +55,24 @@ class interactive(cmd.Cmd):
 
     def do_remove_user(self, arg):
         'Remove a user: remove_user <name>'
-        self._network.removeUser(arg)
+        try:
+            self._network.removeUser(arg)
+        except ValueError as ex:
+            print(str(ex))
 
     def do_like(self, arg):
         'Like a post: like <user>'
-        self._network.like(arg)
+        try:
+            self._network.like(arg)
+        except ValueError as ex:
+            print(str(ex))
 
     def do_unlike(self, arg):
         "Unlike a post: unlike <user>"
-        self._network.unlike(arg)
+        try:
+            self._network.unlike(arg)
+        except ValueError as ex:
+            print(str(ex))
 
     def do_follow(self, arg):
         "Follow a user: follow <follower>:<followed>"
@@ -71,8 +80,8 @@ class interactive(cmd.Cmd):
         if len(args) == 2:
             try:
                 self._network.follow(args[0], args[1])
-            except ValueError:
-                print("User does not exist.")
+            except ValueError as ex:
+                print(str(ex))
         else:
             print("Invalid usage.")
 
@@ -82,8 +91,8 @@ class interactive(cmd.Cmd):
         if len(args) == 2:
             try:
                 self._network.unfollow(args[0], args[1])
-            except ValueError:
-                print("User does not exist.")
+            except ValueError as ex:
+                print(str(ex))
         else:
             print("Invalid usage.")
 
@@ -106,7 +115,7 @@ class interactive(cmd.Cmd):
             try:
                 self._network.addPost(args[0], args[1])
             except ValueError as ex:
-                print("User does not exist.")
+                print(str(ex))
         else:
             print("Invalid usage.")
 

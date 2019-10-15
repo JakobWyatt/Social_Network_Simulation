@@ -16,7 +16,7 @@ class DSALinkedList:
         self._count = 0
 
     def _insert(self, item: object, after: 'DSAListNode'):
-        if after == None:
+        if after is None:
             # Insert at end
             node = DSAListNode(item, self._tail, None)
             self._tail = node
@@ -34,40 +34,42 @@ class DSALinkedList:
         self._count += 1
         
     def _remove(self, item: 'DSAListNode') -> object:
-        if item is self._head:
-            self._head = item._next
-        else:
-            item._prev._next = item._next
+        if item is not None:
+            if item is self._head:
+                self._head = item._next
+            else:
+                item._prev._next = item._next
 
-        if item is self._tail:
-            self._tail = item._prev
-        else:
-            item._next._prev = item._prev
-        self._count -= 1
-        return item._data
+            if item is self._tail:
+                self._tail = item._prev
+            else:
+                item._next._prev = item._prev
+            self._count -= 1
+            item = item._data
+        return item
         
     def _find(self, item: object) -> 'DSAListNode':
         node = self._head
-        while node != None and item != node._data:
+        while node is not None and item != node._data:
             node = node._next
         return node
 
     def __iter__(self):
         def forward_gen(iter):
-            while iter != None:
+            while iter is not None:
                 yield iter._data
                 iter = iter._next
         return forward_gen(self._head)
 
     def __reversed__(self):
         def reverse_gen(iter):
-            while iter != None:
+            while iter is not None:
                 yield iter._data
                 iter = iter._prev        
         return reverse_gen(self._tail)
 
     def isEmpty(self) -> bool:
-        return self._head == None
+        return self._head is None
 
     def insertFirst(self, item: object):
         self._insert(item, self._head)
@@ -94,7 +96,7 @@ class DSALinkedList:
         return self._remove(self._find(item))
 
     def find(self, item: object) -> bool:
-        return self._find(item) != None
+        return self._find(item) is not None
 
     def __len__(self) -> int:
         return self._count

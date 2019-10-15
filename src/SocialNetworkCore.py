@@ -1,11 +1,15 @@
 from typing import List
 from functools import total_ordering
+import unittest
 
 from ADT.DSADirectedGraph import DSADirectedGraph, DSADirectedGraphVertex
 from ADT.DSALinkedList import DSALinkedList, DSAListNode
 from ADT.DSAHeap import DSAHeap
 
 class SocialNetwork:
+    # Error messages
+    USER_NOT_EXIST = "User does not exist."
+
     def __init__(self, *, probLike=-1.0, probFollow=-1.0):
         if probLike == -1.0 and probFollow == -1.0:
             self._probLike = -1.0
@@ -39,16 +43,37 @@ class SocialNetwork:
         ...
 
     def follow(self, follower: str, followed: str):
-        self._network.addEdge(follower, followed)
+        try:
+            self._network.addEdge(follower, followed)
+        except ValueError as e:
+            raise ValueError(SocialNetwork.USER_NOT_EXIST) from e
 
     def unfollow(self, follower: str, followed: str):
-        ...
+        try:
+            self._network.removeEdge(follower, followed)
+        except ValueError as e:
+            raise ValueError(SocialNetwork.USER_NOT_EXIST) from e
 
     def like(self, user: str):
-        ...
+        if len(self._posts) != 0:
+            try:
+                u = self.findUser(user)
+                self._posts.peekFirst().like(u)
+            except ValueError as e:
+                raise ValueError(SocialNetwork.USER_NOT_EXIST) from e
+        else:
+            raise ValueError("There are no posts to like.")
 
     def unlike(self, user: str):
-        ...
+        if len(self._posts) != 0:
+            try:
+                u = self.findUser(user)
+            except ValueError as e:
+                raise ValueError(SocialNetwork.USER_NOT_EXIST) from e
+            if self._posts.peekFirst().unlike(u) is None:
+                raise ValueError("User has not liked this post.")
+        else:
+            raise ValueError("There are no posts to unlike.")
 
     def addUser(self, user: str):
         if self._network.hasVertex(user):
@@ -57,28 +82,42 @@ class SocialNetwork:
         self._network.addVertex(user, DSALinkedList())
 
     def removeUser(self, user: str):
-        ...
+        try:
+            self._network.removeVertex(user)
+        except ValueError as e:
+            raise ValueError(SocialNetwork.USER_NOT_EXIST) from e
 
     def findUser(self, user: str) -> 'SocialNetworkUser':
-        return SocialNetworkUser(self._network.getVertex(user))
+        user = None
+        try:
+            user = SocialNetworkUser(self._network.getVertex(user))
+        except ValueError as e:
+            raise ValueError(SocialNetwork.USER_NOT_EXIST) from e
+        return user
 
     def display(self):
         self._network.render()
 
     def update(self):
-        ...
+        if self._canUpdate():
+            self._posts.peekFirst().update()
+        else:
+            raise ValueError("Network cannot be updated.")
 
     def save(self) -> str:
         ...
 
     def addPost(self, userName: str, content: str):
-        user = self.findUser(userName)
-        self._posts.insertFirst(SocialNetworkPost(user, content))
-        self._postLikes.add(self._posts.peekFirst(), None)
-        user.addPost(self._posts.peekFirst())
+        try:
+            user = self.findUser(userName)
+            self._posts.insertFirst(SocialNetworkPost(user, content))
+            self._postLikes.add(self._posts.peekFirst(), None)
+            user.addPost(self._posts.peekFirst())
+        except ValueError as e:
+            raise ValueError(SocialNetwork.USER_NOT_EXIST) from e
 
     def done(self) -> bool:
-        return self._posts.count() == 0 or self._posts.peekFirst().done()
+        return len(self._posts) == 0 or self._posts.peekFirst().done()
 
     # Statistics methods
 
@@ -114,7 +153,7 @@ class SocialNetwork:
         return (self._probFollow != -1.0
                 and self._probLike != -1.0
                 and self._network.getVertexCount() != 0
-                and self.done)
+                and not self.done())
 
 
 @total_ordering
@@ -129,6 +168,12 @@ class SocialNetworkPost:
     def user(self) -> 'SocialNetworkUser':
         return self._liked.peekLast()
 
+    def like(self, user: 'SocialNetworkUser'):
+        self._liked.insertFirst(user)
+
+    def unlike(self, user: 'SocialNetworkUser'):
+        return self._liked.remove(user)
+
     @property
     def content(self) -> str:
         return self._content
@@ -139,12 +184,12 @@ class SocialNetworkPost:
     def save(self) -> str:
         ...
 
+    def update(self) -> str:
+        ...
+
     @property
     def liked(self) -> DSALinkedList:
         return self._liked
-
-    def remove(self, user: str):
-        ...
 
     def __eq__(self, other):
         return self is other
@@ -175,7 +220,100 @@ class SocialNetworkUser:
         return self._vertex.label
 
     def __eq__(self, other):
-        return self is other
+        return self._vertex is other._vertex
 
     def __lt__(self, other):
         return len(self.followers()) < len(other.followers())
+
+
+class SocialNetworkTest(unittest.TestCase):
+    def testAddUser(self):
+        network = SocialNetwork()
+        network.addUser("Jakob Wyatt")
+        network.addUser("Art Page")
+
+    def testFindUser(self):
+        network = SocialNetwork()
+        network.addUser("Jakob Wyatt")
+        network.addUser("beach")
+        user = network.findUser("Jakob Wyatt")
+        beach = network.findUser("beach")
+        self.assertRaises(ValueError, network.findUser, "byte")
+        self.assertEqual(user.name == "Jakob Wyatt")
+        self.assertEqual(beach.name == "beach")
+
+    def testFollow(self):
+        network = SocialNetwork()
+        network.addUser("Jakob Wyatt")
+        network.addUser("Imagination")
+        user = network.findUser("Jakob Wyatt")
+        imag = network.findUser("Imagination")
+        self.assertEqual(len(user.followers()), 0)
+        self.assertEqual(len(user.following()), 0)
+        network.follow("Jakob Wyatt", "Imagination")
+        self.assertEqual(len(user.followers()), 0)
+        self.assertEqual(len(user.following()), 1)
+        self.assertEqual(len(imag.followers()), 1)
+        self.assertEqual(len(imag.following()), 0)
+        self.assertRaises(ValueError, network.follow, "Jakob Wyatt", "Non existent")
+        network.follow("Imagination", "Jakob Wyatt")
+        self.assertEqual(len(user.followers()), 1)
+        self.assertEqual(len(user.following()), 1)
+        self.assertEqual(len(imag.followers()), 1)
+        self.assertEqual(len(imag.following()), 1)
+        network.addUser("example")
+        network.follow("example", "Imagination")
+        network.follow("Jakob Wyatt", "example")
+        self.assertEqual(len(user.followers()), 1)
+        self.assertEqual(len(user.following()), 2)
+        self.assertEqual(len(imag.followers()), 2)
+        self.assertEqual(len(imag.following()), 1)
+
+    def testUnfollow(self):
+        network = SocialNetwork()
+        network.addUser("a")
+        network.addUser("b")
+        network.addUser("c")
+        network.follow("a", "b")
+        network.follow("b", "c")
+        a = network.findUser("a")
+        b = network.findUser("b")
+        c = network.findUser("c")
+        network.follow("c", "a")
+        network.follow("b", "a")
+        self.assertEqual(len(a.followers()), 2)
+        self.assertEqual(len(a.following()), 1)
+        self.assertEqual(len(b.followers()), 1)
+        self.assertEqual(len(b.following()), 2)
+        self.assertEqual(len(c.followers()), 1)
+        self.assertEqual(len(c.following()), 1)
+        network.unfollow("c", "a")
+        network.unfollow("a", "b")
+        self.assertEqual(len(a.followers()), 1)
+        self.assertEqual(len(a.following()), 0)
+        self.assertEqual(len(b.followers()), 0)
+        self.assertEqual(len(b.following()), 2)
+        self.assertEqual(len(c.followers()), 1)
+        self.assertEqual(len(c.following()), 0)
+
+    def testNewPost(self):
+        network = SocialNetwork()
+        network.addUser("Jakob")
+        network.addPost("Jakob", "In bali atm")
+        jakob = network.findUser("jakob")
+        self.assertEqual(len(jakob.posts()), 1)
+        network.addPost("Jakob", "Generic Meme")
+        self.assertEqual(len(jakob.posts()), 2)
+
+    def testLike(self):
+        ...
+
+    def testUnlike(self):
+        ...
+
+
+if __name__ == "__main__":
+    network = SocialNetwork()
+    network.addUser("jakob")
+    network.addPost("jakob", "hello")
+    # unittest.main()
