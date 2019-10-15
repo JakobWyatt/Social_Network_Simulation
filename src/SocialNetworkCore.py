@@ -305,11 +305,19 @@ class SocialNetworkTest(unittest.TestCase):
         network.addPost("Jakob", "Generic Meme")
         self.assertEqual(len(jakob.posts), 2)
 
-    def testLike(self):
-        ...
-
-    def testUnlike(self):
-        ...
+    def testLikeUnlike(self):
+        network = SocialNetwork()
+        network.addUser("Jakob")
+        network.addUser("Tom")
+        network.addUser("Ben")
+        network.addPost("Jakob", "In bali atm")
+        network.like("Ben")
+        network.addPost("Jakob", "bad content")
+        network.like("Tom")
+        network.like("Ben")
+        network.addPost("Jakob", "meme")
+        for x1, x2 in zip(network.popularPosts(), ["bad content", "In bali atm", "meme"]):
+            self.assertEqual(x2, x1.content)
 
 
 if __name__ == "__main__":
