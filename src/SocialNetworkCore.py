@@ -235,10 +235,13 @@ class SocialNetworkPost:
         self._liked = self._recentlyLiked.concat(self._liked)
         self._recentlyLiked = newLikes
 
-    def liked(self) -> DSALinkedList:
-        # Probably not working
-        from copy import copy
-        return copy(self._recentlyLiked).concat(copy(self._liked))
+    def liked(self):
+        def generateLiked(l1, l2):
+            for x in l1:
+                yield x
+            for x in l2:
+                yield x
+        return generateLiked(self._recentlyLiked, self._liked)
 
     def __eq__(self, other):
         return self is other

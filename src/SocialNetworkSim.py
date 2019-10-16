@@ -129,7 +129,7 @@ class interactive(cmd.Cmd):
 
     def do_popular_posts(self, arg):
         'Display posts in order of popularity: popular_posts'
-        [print(f"user: {x.user().name()}\ncontent: {x.content}\nlikes: {len(x.liked())}\n") for x in self._network.popularPosts()]
+        [print(f"user: {x.user().name()}\ncontent: {x.content}\nlikes: {sum(1 for _ in x.liked())}\n") for x in self._network.popularPosts()]
 
     def do_popular_users(self, arg):
         'Display users in order of popularity: popular_users'
@@ -157,13 +157,14 @@ class interactive(cmd.Cmd):
 
 def simulation(netfile, eventfile, prob_like, prob_foll):
     network = SocialNetwork(probLike=prob_like, probFollow=prob_foll)
-    network.loadNetwork(network)
+    network.loadNetwork(netfile)
     events = [x.rstrip('\n') for x in eventfile]
     # break not allowed
     i = 0
     error = False
     from tempfile import NamedTemporaryFile
     with NamedTemporaryFile(delete=False) as f:
+        print(f"Simulation logged to {f.name}")
         while not error and i < len(events):
             x = events[i].split(':')
             if len(x) == 3:
@@ -174,7 +175,7 @@ def simulation(netfile, eventfile, prob_like, prob_foll):
                     while not network.done():
                         network.update()
                         # Print statistics
-                        f.write(network.simstate())
+                        f.write(network.simstate().encode())
                 else:
                     error = True
                     print("Invalid file format.")

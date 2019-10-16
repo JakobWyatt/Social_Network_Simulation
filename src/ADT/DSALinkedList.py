@@ -106,6 +106,8 @@ class DSALinkedList:
             self._tail._next = l._head
         if l._head is not None:
             l._head._prev = self._tail
+        if l._tail is not None:
+            self._tail = l._tail
         self._count += len(l)
         return self
 
