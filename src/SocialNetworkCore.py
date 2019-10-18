@@ -60,14 +60,18 @@ class SocialNetwork:
                 raise ValueError("Invalid file.")
 
     def follow(self, follower: str, followed: str):
+        # Return false if the user is already following
+        ret = True
         if follower == followed:
             raise ValueError("User cannot follow themselves.")
         if self._network.hasEdge(follower, followed):
-            raise ValueError(f"{follower} is already following {followed}.")
-        try:
-            self._network.addEdge(follower, followed)
-        except ValueError as e:
-            raise ValueError(SocialNetwork.USER_NOT_EXIST) from e
+            ret = False
+        else:
+            try:
+                self._network.addEdge(follower, followed)
+            except ValueError as e:
+                raise ValueError(SocialNetwork.USER_NOT_EXIST) from e
+        return ret
 
     def unfollow(self, follower: str, followed: str):
         try:
@@ -137,7 +141,8 @@ class SocialNetwork:
             self._postLikes.add(self._posts.peekFirst(), None)
             user.addPost(self._posts.peekFirst())
         except ValueError as e:
-            raise ValueError("Invalid user or clickbait factor.") from e
+            raise ValueError((f"Could not create post. User: {userName}, ",
+                              f"Clickbait factor: {clickbaitFactor}")) from e
 
     def done(self) -> bool:
         return len(self._posts) == 0 or self._posts.peekFirst().done()

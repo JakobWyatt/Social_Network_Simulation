@@ -78,10 +78,8 @@ class interactive(cmd.Cmd):
         "Follow a user: follow <followed>:<follower>"
         args = arg.split(':')
         if len(args) == 2:
-            try:
-                self._network.follow(args[1], args[0])
-            except ValueError as ex:
-                print(str(ex))
+            if not self._network.follow(args[1], args[0]):
+                print(f"{args[1]} is already following {args[0]}.")
         else:
             print("Invalid usage.")
 
@@ -163,6 +161,7 @@ def simulationInterface(netfile, eventfile, prob_like, prob_foll):
         print(f"Simulation logged to {fileName}")
     except ValueError as ex:
         print(str(ex))
+        raise ex
 
 
 def simulation(netfile, eventfile, prob_like, prob_foll):
@@ -192,8 +191,9 @@ def execEventFile(network, eventFile) -> str:
             if len(tokens) == 3:
                 network.addPost(tokens[1], tokens[2])
             else:
-                network.addPost(tokens[1], tokens[2], tokens[3])
+                network.addPost(tokens[1], tokens[2], float(tokens[3]))
             while not network.done():
+                print(network.simstate())
                 outcome += network.simstate()
                 network.update()
         else:
