@@ -8,8 +8,8 @@ Hamm
 Lenny
 Andy:Woody
 Woody:Bo Peep
-Bo Peep: Woody
-Woody: Slinky Dog
+Bo Peep:Woody
+Woody:Slinky Dog
 Woody:Rex
 Andy:Mr. PotatoHead
 Andy:Bo Peep

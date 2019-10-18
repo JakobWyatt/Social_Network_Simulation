@@ -122,5 +122,5 @@ P:Sid:The Toys! The Toys are alive!:3
 R:Mrs Nesbitt
 U:Sergeant:Woody
 P:Woody:Hey, Buzz! You're flying!
-P:Buzz:This isn't flying, this is falling with style!
+P:Buzz Lightyear:This isn't flying, this is falling with style!
 P:Woody:To infinity and beyond!:3
