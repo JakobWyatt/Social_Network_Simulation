@@ -1,0 +1,18 @@
+FAQ: (including relevant Q's from previous years)
+
+            In the sample data, who's following who? The Nebrie is following Kira. Jen follows the Master.
+            What does the clickbait factor do? It is a multiplier on the likelihood of "liking" a post. So with a factor of 2, the chance of liking might increase from 0.2 to 0.4. If it is not stated, the factor is 1.
+            How do I run a timestep? - The timestep is a loose version of the concept… stepping through is required for propagating a post (through likes) to a nodes’ neighbours. Once a node has liked a post, then its neighbours will see if, and perhaps like it, then its neighbours and so on… This will radiate out from the initial poster – and I see it as a timestep per level out from the initial post.
+            How is the network meant to look like when displayed? - It could be a adjacency list or matrix. There’s no requirement for graphical visualisation, but that may give some bonus marks.
+            What are node and edge operations? - A node operation would add or remove a node, an edge operation would add or remove a follow.
+            What role do the probabilities have in relation to the operations? - When a person posts, their followers have a <prob_like> possibility of liking the post. If they like the post, then their followers will see it, and then have a probability of liking it. 
+            Also, if a post is liked, there is a <prob_follow> probability of a person connecting directly (following) the original poster.
+            I have used some of my functions and classes from other practicals - how do I cite them? You need to add a comment in the block documentation at the start of reused classes or methods, as well as noting the code was previously submitted for Prac X in the justification documentation.
+            Do we need to include test harnesses for data structures and ADTs implemented in the practical exercises? Yes
+            To what extent can we research on ways of implementing certain aspects of the assignment? You need to cite any algorithms or code you use from other sources. I don't expect you to reinvent or come up with your own tree varieties. However, there should be no verbatim code (identical) used in your assignment (except that used and cited from your own practicals).
+            Can I use list/ArrayList or other built-in datatypes? - No, you shouldn't use any of the Java/Python built-in ADTs, but you can implement versions of them. Again, you will have to justify any choices made. Use of Java/Python ADTs will incur a large penalty (previously -20 marks) - as implementing data structures is the point of this unit. In Python, using a list output by split(), and readlines() is an exception.
+            If you are choosing to use a visualisation package - if it needs specific data structures/types, you can use them for that specific part of the assignment.
+            Can we refer to the lecture notes when writing our documentation (e.g. for finding some of the advantages and disadvantages of using one data structure over another)? Yes.
+            Will we lose marks if some of the algorithms we use differ from the ones used in lecture slides (ie if we create our own version of sorting algorithm)? That's fine, but if you've found it on another source, you should reference where you found it.
+            Can I use the supplied test harnesses? Yes, but you need to cite them, as with your other code from other sources.
+            Can I use JUnit or Mockito? Yes, use of testing frameworks is encouraged.
