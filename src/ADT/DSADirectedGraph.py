@@ -139,7 +139,7 @@ class DSADirectedGraph:
         first = "".join([f"{x.label}\n" for x in reversed(self._verticies)])
         second = ""
         for x in reversed(self._verticies):
-            second = second + "".join([f"{x.label}:{f.label}\n" for f in reversed(x.successor)])
+            second = second + "".join([f"{f.label}:{x.label}\n" for f in reversed(x.successor)])
         return first + second
 
     def adjacencyMatrix(self):

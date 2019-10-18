@@ -51,7 +51,8 @@ class SocialNetwork:
             formatted = x.rstrip('\n').split(':')
             if len(formatted) == 1:
                 # Add user
-                self.addUser(formatted[0])
+                if len(formatted[0]) != 0:
+                    self.addUser(formatted[0])
             elif len(formatted) == 2:
                 # Add follow
                 self.follow(formatted[1], formatted[0])
@@ -374,11 +375,12 @@ class SocialNetworkTest(unittest.TestCase):
 
     def testLoadSaveNetwork(self):
         network = SocialNetwork()
-        with open("../example/network_file.txt", "r") as f:
+        network2 = SocialNetwork()
+        with open("../example/dark_crystal_net.txt", "r") as f:
             network.loadNetwork(f)
-            f.seek(0)
-            for x1, x2 in zip(f, network.save().split('\n')):
-                self.assertEqual(x1.rstrip('\n'), x2)
+            network2.loadNetwork(network.save().split('\n'))
+            for x1, x2 in zip(network2.save().split('\n'), network.save().split('\n')):
+                self.assertEqual(x1.rstrip('\n'), x2.rstrip('\n'))
 
     def testSavePost(self):
         network = SocialNetwork()
