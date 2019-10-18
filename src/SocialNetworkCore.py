@@ -54,7 +54,7 @@ class SocialNetwork:
                 self.addUser(formatted[0])
             elif len(formatted) == 2:
                 # Add follow
-                self.follow(formatted[0], formatted[1])
+                self.follow(formatted[1], formatted[0])
             else:
                 raise ValueError("Invalid file.")
 

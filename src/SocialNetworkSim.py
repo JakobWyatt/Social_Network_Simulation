@@ -75,22 +75,22 @@ class interactive(cmd.Cmd):
             print(str(ex))
 
     def do_follow(self, arg):
-        "Follow a user: follow <follower>:<followed>"
+        "Follow a user: follow <followed>:<follower>"
         args = arg.split(':')
         if len(args) == 2:
             try:
-                self._network.follow(args[0], args[1])
+                self._network.follow(args[1], args[0])
             except ValueError as ex:
                 print(str(ex))
         else:
             print("Invalid usage.")
 
     def do_unfollow(self, arg):
-        "Unfollow a user: unfollow <follower>:<followed>"
+        "Unfollow a user: unfollow <followed>:<follower>"
         args = arg.split(':')
         if len(args) == 2:
             try:
-                self._network.unfollow(args[0], args[1])
+                self._network.unfollow(args[1], args[0])
             except ValueError as ex:
                 print(str(ex))
         else:
@@ -169,7 +169,7 @@ def simulation(netfile, eventfile, prob_like, prob_foll):
             x = events[i].split(':')
             if len(x) == 3:
                 if x[0] == "F":
-                    network.follow(x[1], x[2])
+                    network.follow(x[2], x[1])
                 elif x[0] == "P":
                     network.addPost(x[1], x[2])
                     while not network.done():
