@@ -151,7 +151,7 @@ class DSADirectedGraph:
         return mat
 
     def display(self) -> str:
-        return "digraph {\n" + "".join([x.gv() for x in self._verticies]) + "}\n"
+        return "digraph {\nrankdir=BT\n" + "".join([x.gv() for x in self._verticies]) + "}\n"
 
     def render(self, *, type='svg', id=''):
         """

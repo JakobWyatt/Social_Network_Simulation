@@ -109,15 +109,17 @@ class interactive(cmd.Cmd):
             print("Invalid usage.")
 
     def do_new_post(self, arg):
-        'Create a new post: new_post <name>:<content>'
+        'Create a new post: new_post <name>:<content>:<(optional) clickbaitFactor>'
         args = arg.split(':')
-        if len(args) == 2:
-            try:
+        try:
+            if len(args) == 2:
                 self._network.addPost(args[0], args[1])
-            except ValueError as ex:
-                print(str(ex))
-        else:
-            print("Invalid usage.")
+            elif len(args) == 3:
+                self._network.addPost(args[0], args[1], float(args[2]))
+            else:
+                print("Invalid usage.")
+        except ValueError as ex:
+            print(str(ex))
 
     def do_display_network(self, arg):
         'Display the social network: display_network'

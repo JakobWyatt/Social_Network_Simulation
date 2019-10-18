@@ -130,14 +130,14 @@ class SocialNetwork:
     def save(self) -> str:
         return self._network.displayExploded()
 
-    def addPost(self, userName: str, content: str):
+    def addPost(self, userName: str, content: str, clickbaitFactor: float = 1):
         try:
             user = self.findUser(userName)
-            self._posts.insertFirst(SocialNetworkPost(user, content, self))
+            self._posts.insertFirst(SocialNetworkPost(user, content, self, clickbaitFactor))
             self._postLikes.add(self._posts.peekFirst(), None)
             user.addPost(self._posts.peekFirst())
         except ValueError as e:
-            raise ValueError(SocialNetwork.USER_NOT_EXIST) from e
+            raise ValueError("Invalid user or clickbait factor.") from e
 
     def done(self) -> bool:
         return len(self._posts) == 0 or self._posts.peekFirst().done()
@@ -182,12 +182,24 @@ class SocialNetwork:
 
 @total_ordering
 class SocialNetworkPost:
-    def __init__(self, user: 'SocialNetworkUser', content: str, network: 'SocialNetwork'):
+    def __init__(self, user: 'SocialNetworkUser', content: str, network: 'SocialNetwork',
+                 clickbaitFactor):
         self._recentlyLiked = DSALinkedList()
         self._liked = DSALinkedList()
         self._recentlyLiked.insertFirst(user)
         self._content = content
         self._network = network
+        self.clickbaitFactor = clickbaitFactor
+
+    @property
+    def clickbaitFactor(self):
+        return self._clickbaitFactor
+
+    @clickbaitFactor.setter
+    def clickbaitFactor(self, clickbaitFactor: float):
+        if clickbaitFactor < 0:
+            raise ValueError("clickbaitFactor must be positive.")
+        self._clickbaitFactor = clickbaitFactor
 
     def user(self) -> 'SocialNetworkUser':
         if len(self._liked) == 0:
@@ -224,7 +236,7 @@ class SocialNetworkPost:
         for x in self._recentlyLiked:
             for user in x.followers():
                 # Does the user like the post?
-                if binomial(1, self._network.probLike) == 1:
+                if binomial(1, min(1, self._network.probLike * self.clickbaitFactor)) == 1:
                     if not self._liked.find(user) and not self._recentlyLiked.find(user):
                         newLikes.insertFirst(user)
                     # Does the user follow the original poster?
