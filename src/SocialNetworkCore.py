@@ -227,7 +227,7 @@ class SocialNetworkPost:
         return len(self._recentlyLiked) == 0
         
     def save(self) -> str:
-        return (f"content: {self.content}\nuser: {self.user().name()}\n"
+        return (f"content: {self.content}\nuser: {self.user().name()}\nliked:\n"
                 + '\n'.join([x.name() for x in self.liked()]) + '\n')
 
     def update(self) -> str:

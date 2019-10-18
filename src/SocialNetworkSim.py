@@ -157,34 +157,48 @@ class interactive(cmd.Cmd):
         return True
 
 
+def simulationInterface(netfile, eventfile, prob_like, prob_foll):
+    try:
+        fileName = simulation(netfile, eventfile, prob_like, prob_foll)
+        print(f"Simulation logged to {fileName}")
+    except ValueError as ex:
+        print(str(ex))
+
+
 def simulation(netfile, eventfile, prob_like, prob_foll):
     network = SocialNetwork(probLike=prob_like, probFollow=prob_foll)
     network.loadNetwork(netfile)
     events = [x.rstrip('\n') for x in eventfile]
-    # break not allowed
-    i = 0
-    error = False
     from tempfile import NamedTemporaryFile
     with NamedTemporaryFile(delete=False) as f:
-        print(f"Simulation logged to {f.name}")
-        while not error and i < len(events):
-            x = events[i].split(':')
-            if len(x) == 3:
-                if x[0] == "F":
-                    network.follow(x[2], x[1])
-                elif x[0] == "P":
-                    network.addPost(x[1], x[2])
-                    while not network.done():
-                        network.update()
-                        # Print statistics
-                        f.write(network.simstate().encode())
-                else:
-                    error = True
-                    print("Invalid file format.")
+        filename = f.name
+        f.write(execEventFile(network, events).encode())
+    return filename
+
+
+def execEventFile(network, eventFile) -> str:
+    outcome = ""
+    for x in eventFile:
+        tokens = x.split(':')
+        if len(tokens) == 3 and tokens[0] == "F":
+            network.follow(tokens[2], tokens[1])
+        elif len(tokens) == 3 and tokens[0] == "U":
+            network.unfollow(tokens[2], tokens[1])
+        elif len(tokens) == 2 and tokens[0] == "A":
+            network.addUser(tokens[1])
+        elif len(tokens) == 2 and tokens[0] == "R":
+            network.removeUser(tokens[1])
+        elif len(tokens) == 3 or len(tokens) == 4 and tokens[0] == "P":
+            if len(tokens) == 3:
+                network.addPost(tokens[1], tokens[2])
             else:
-                error = True
-                print("Invalid file format.")
-            i += 1
+                network.addPost(tokens[1], tokens[2], tokens[3])
+            while not network.done():
+                outcome += network.simstate()
+                network.update()
+        else:
+            raise ValueError("Invalid file format.")
+    return outcome
 
 
 def make_parser():
@@ -219,4 +233,4 @@ if __name__ == "__main__":
         if args.mode == "-i":
             interactive().cmdloop()
         elif args.mode == "-s":
-            simulation(args.netfile, args.eventfile, args.prob_like, args.prob_foll)
+            simulationInterface(args.netfile, args.eventfile, args.prob_like, args.prob_foll)
