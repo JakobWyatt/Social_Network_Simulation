@@ -28,7 +28,7 @@ The update algorithm works as follows:
     \item Iterate through all users who liked the post in the previous timestep.
             Each of their followers is 'exposed' to the post, and have a chance of liking the post.
             This chance is sampled from a Bernoulli distribution with probability
-            $clamp(\mathit{prob\_like} \times \mathit{clickbait\_factor}, 0, 1)$.
+            $\mathit{clamp}\left(\mathit{prob\_like} \times \mathit{clickbait\_factor}, 0, 1\right)$.
     \item If a user likes a post in the current timestep, they have a chance of following the
             original poster. This is sampled using the same technique as above, with global probability
             $\mathit{prob\_foll}$.
@@ -37,7 +37,24 @@ Note that in the above algorithm, if a user does not like a post, they may poten
 be exposed to it later via a different friend. This behaviour is intentional, as it incentivises
 a highly connected network.
 
-\end{enumerate}
+Parameters that will be tracked before, during, and after the simulation include:
+\begin{itemize}
+    \item Clustering Coefficient
+    \item Degrees of Seperation
+    \item Density (Proportion of follows in the network relative to the maximum possible)
+    \item Average and s.d. of followers per user
+\end{itemize}
+
+Some parameters that will be varied in the creation of the social network include:
+\begin{itemize}
+    \item Probability of liking a post
+    \item Probability of following a user
+    \item Number of users
+    \item Selection of Clickbait Factor
+\end{itemize}
+
+The main metric of a social networks performance, from a monetary perspective,
+is likes per person per post, which will be measured during simulation of the network.
 \section{Methodology}
 
 \section{Results}

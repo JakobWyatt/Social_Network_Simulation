@@ -29,7 +29,7 @@ The update algorithm works as follows:
     \item Iterate through all users who liked the post in the previous timestep.
             Each of their followers is 'exposed' to the post, and have a chance of liking the post.
             This chance is sampled from a Bernoulli distribution with probability
-            $clamp(\mathit{prob\_like} \times \mathit{clickbait\_factor}, 0, 1)$.
+            $\mathit{clamp}(\mathit{prob\_like} \times \mathit{clickbait\_factor}, 0, 1)$.
     \item If a user likes a post in the current timestep, they have a chance of following the
             original poster. This is sampled using the same technique as above, with global probability
             $\mathit{prob\_foll}$.
