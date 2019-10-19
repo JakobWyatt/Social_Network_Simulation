@@ -9,6 +9,35 @@
 \maketitle
 \pagebreak
 \section{Overview}
+This program is designed to simulate a social network.
+The user interface is as specified in the assignment brief,
+with additional functionality including graphical representation
+of the socical network in interactive mode, and interactive liking/unliking 
+of posts.\\
+There exists only one post at a time, with a new post being loaded when the current
+post has not had any activity in the last timestep. The original poster always
+likes their own post. A user can only like a post once.\\
+The simulation consists
+of timesteps, with a function \texttt{update()} to move between timesteps.\\
+The social network consists of a set of users that may follow eachother,
+which has been represented in code as a directed graph. Users may not follow themselves,
+or follow eachother more than once.\\
+The update algorithm works as follows:
+\begin{enumerate}
+    \item Check that there exists some users that have liked the post in the previous timestep.
+            If there are none, the update ends and the next post is loaded.
+    \item Iterate through all users who liked the post in the previous timestep.
+            Each of their followers is 'exposed' to the post, and have a chance of liking the post.
+            This chance is sampled from a Bernoulli distribution with probability
+            $clamp(\mathit{prob\_like} \times \mathit{clickbait\_factor}, 0, 1)$.
+    \item If a user likes a post in the current timestep, they have a chance of following the
+            original poster. This is sampled using the same technique as above, with global probability
+            $\mathit{prob\_foll}$.
+\end{enumerate}
+Note that in the above algorithm, if a user does not like a post, they may potentially
+be exposed to it later via a different friend. This behaviour is intentional, as it incentivises
+a highly connected network.
+
 \section{Justification}
 \section{Generated Documentation}
 \end{document}
