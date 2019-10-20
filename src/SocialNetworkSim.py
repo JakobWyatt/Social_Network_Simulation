@@ -193,7 +193,6 @@ def execEventFile(network, eventFile) -> str:
             else:
                 network.addPost(tokens[1], tokens[2], float(tokens[3]))
             while not network.done():
-                print(network.simstate())
                 outcome += network.simstate()
                 network.update()
         else:

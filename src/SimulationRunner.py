@@ -72,4 +72,4 @@ def generateSocialNetwork(*, size: int, follower_av: float, follower_sd: float,
 
 
 if __name__ == "__main__":
-    print(generateSocialNetwork(size=10, follower_av=5, follower_sd=1, clustering_exp=1))
+    print(generateSocialNetwork(size=50, follower_av=5, follower_sd=5, clustering_exp=3))

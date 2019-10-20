@@ -161,7 +161,13 @@ class SocialNetwork:
     def optionalStats(self) -> str:
         """Outputs optional statistics about the network.
         """
-        return ""
+        return (f"Likes per person per post: {self.likesScaled()}\n"
+                )
+
+    def likesScaled(self) -> float:
+        # Likes per person per post
+        return (sum([sum(1 for _ in x.liked()) for x in self._posts])
+            / (len(self._posts) * self._network.getVertexCount()))
 
     def popularPosts(self) -> List['SocialNetworkPost']:
         self._postLikes._heapify()
