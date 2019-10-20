@@ -161,13 +161,20 @@ class SocialNetwork:
     def optionalStats(self) -> str:
         """Outputs optional statistics about the network.
         """
+        followAv, followSd = self.followsAvSd()
         return (f"Likes per person per post: {self.likesScaled()}\n"
-                )
+                f"Follower Average: {followAv}\nFollower s.d: {followSd}\n")
 
     def likesScaled(self) -> float:
         # Likes per person per post
         return (sum([sum(1 for _ in x.liked()) for x in self._posts])
             / (len(self._posts) * self._network.getVertexCount()))
+
+    def followsAvSd(self) -> (float, float):
+        import statistics
+        followNums = [len(x.successor) for x in self._network]
+        return (sum(followNums) / len(followNums),
+                statistics.pstdev(followNums))
 
     def popularPosts(self) -> List['SocialNetworkPost']:
         self._postLikes._heapify()

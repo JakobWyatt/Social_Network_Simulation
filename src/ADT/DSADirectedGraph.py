@@ -102,6 +102,9 @@ class DSADirectedGraph:
     def getEdgeCount(self) -> int:
         return sum(len(x.successor) for x in self._verticies)
 
+    def __iter__(self):
+        return self._verticies.__iter__()
+
     def getVertex(self, label: object) -> 'DSADirectedGraphVertex':
         # Use list internals for efficiency
         vertex = self._verticies._find(DSADirectedGraphVertex(label, None))
