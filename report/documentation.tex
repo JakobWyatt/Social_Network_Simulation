@@ -1,6 +1,7 @@
 \documentclass{article}
 
 \usepackage{microtype}
+\usepackage{hyperref}
 
 \title{COMP1002 Assignment\\Documentation}
 \author{Jakob Wyatt\\19477143}
@@ -9,6 +10,7 @@
 \maketitle
 \pagebreak
 \section{Overview}
+\label{sec:Overview}
 This program is designed to simulate a social network.
 The user interface is as specified in the assignment brief,
 with additional functionality including graphical representation
@@ -82,7 +84,24 @@ Another performance optimization is that user posts are cached in a dedicated li
 This speeds up the 'list users posts' operation, as it avoids needing to search through every post. On networks with large amounts
 of posts, this gives a significant performance increase.
 
+An alternative algorithm to the one described in \autoref{sec:Overview} is to use a breadth first search through the graph instead,
+iterating over all the nodes in the network exactly once. The reason why this was eventually decided against was because
+the desired behaviour was to expose a user to a post more often if more of their friends interacted with the post.
+This emulates behaviour on social media
+platforms such as facebook, where a user may see an old post if a friend has recently liked it.
 
+Some other interesting algorithms that were implemented in this program is the calculation of the globally averaged local clustering coefficient, found in the
+function \texttt{SocialNetwork.ClusteringCoefficient}. This algorithm determines the clustering of a graph, with a totally random graph
+having low clustering coefficient. This is determined by first finding the local clustering coefficient for each node, which is done by counting
+the number of connections between a nodes followers, and dividing by the total number of potential connections. This is then averaged over all
+verticies and edges in the network. This algorithm has O(n^3) complexity.
+
+To generate test data, a random-walk style algorithm was used. This algorithm was invented by the author, and to their knowledge, does not exist
+elsewhere.
+
+To test different social networks with various parameters, a gridsearch algorithm was used. (RN -> RN) This algorithm finds the outcome of all possible
+combinations of parameters, and logs them to a file. An advantage to this algorithm is that it is easy to implement.
+Disadvantages of this algorithm is that it produces a lot of data, which can be difficult to analyse, and that it takes a long time to run.
 
 \section{Generated Documentation}
 \end{document}
