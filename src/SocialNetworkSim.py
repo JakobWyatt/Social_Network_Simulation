@@ -173,9 +173,9 @@ def simulation(netfile, eventfile, prob_like, prob_foll):
     network.loadNetwork(netfile)
     events = [x.rstrip('\n') for x in eventfile]
     from tempfile import NamedTemporaryFile
-    with NamedTemporaryFile(delete=False) as f:
+    with NamedTemporaryFile(delete=False, mode='w') as f:
         filename = f.name
-        f.write(execEventFile(network, events).encode())
+        f.write(execEventFile(network, events))
     return filename
 
 

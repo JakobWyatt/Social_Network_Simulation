@@ -14,8 +14,8 @@ import itertools
 # This will be called multiple times in a "gridsearch" fashion, to find data relating the outputs
 # and inputs.
 
-def generateSocialNetwork(*, size: int, follower_av: float, follower_sd: float,
-                          clustering_func) -> str:
+def generateSocialNetworkAndPost(*, size: int, follower_av: float, follower_sd: float,
+                          clustering_func, post_num, clickbait_sd) -> str:
     # Clustering coefficient is HARD
     # Algorithm to calculate average local clustering coefficient:
     # 1. Count links between nodes in neighbourhood and divide by possible links in neighbourhood.
@@ -67,11 +67,18 @@ def generateSocialNetwork(*, size: int, follower_av: float, follower_sd: float,
                 possibleNodes = list(filter(lambda x: (x not in successorLabels) and x != node.label, possibleNodes))
                 network.addEdge(node.label, random.choice(possibleNodes))
     from tempfile import NamedTemporaryFile
-    with NamedTemporaryFile(delete=False) as f:
-        filename = f.name
-        f.write(network.displayExploded().encode())
-    return filename
+    with NamedTemporaryFile(delete=False, mode='w') as f:
+        netFilename = f.name
+        f.write(network.displayExploded())
+    # Generate Posts
+    with NamedTemporaryFile(delete=False, mode='w') as f:
+        postFilename = f.name
+        for _ in range(post_num):
+            postNode = f"A{random.choice(range(size))}"
+            f.write(f"P:{postNode}:CONTENT:{max(0, random.gauss(1, clickbait_sd))}\n")
+    return netFilename, postFilename
 
 
 if __name__ == "__main__":
-    print(generateSocialNetwork(size=50, follower_av=25, follower_sd=5, clustering_func=lambda x: 1))
+    print(generateSocialNetworkAndPost(size=50, follower_av=25, follower_sd=5, clustering_func=lambda x: 1,
+                                post_num=50, clickbait_sd=1))
