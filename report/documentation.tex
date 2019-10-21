@@ -32,7 +32,7 @@ The update algorithm works as follows:
             $\mathit{clamp}(\mathit{prob\_like} \times \mathit{clickbait\_factor}, 0, 1)$.
     \item If a user likes a post in the current timestep, they have a chance of following the
             original poster. This is sampled using the same technique as above, with global probability
-            $\mathit{prob\_foll}$.
+            $\mathit{prob\_foll}$.g
 \end{enumerate}
 Note that in the above algorithm, if a user does not like a post, they may potentially
 be exposed to it later via a different friend. This behaviour is intentional, as it incentivises
@@ -55,7 +55,11 @@ used to store this data. However, this ended up being rather inefficient, with a
 $O\left(V\right)$ for vertex find/remove and $O\left(E + V\right)$ for edge find/remove.
 Although vertex add and edge add are theoretically $O\left(1\right)$, in practice they had a time complexity
 equal to vertex find and edge find, as it had to be checked that the vertex/edge did not already exist in the network.
-To improve the performance of these operations, a DSAHash
+
+To improve the performance of these operations, a DSAHashTable was used to store the verticies and edges instead.
+This gives $O\left(1\right)$
+performance for find, insert, and remove operations. Despite the greater overhead, in practice it was found to outperform
+the linked list implementation at a graph size of 20, approximately doubling the speed when the number of verticies was 50.
 
 \section{Generated Documentation}
 \end{document}

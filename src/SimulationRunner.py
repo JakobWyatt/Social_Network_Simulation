@@ -91,11 +91,11 @@ def gridSearch():
     #posts = 10
     like_prob = [1]
     foll_prob = [1]
-    size = [20]
+    size = [80]
     follower_average_mult_sz = [0.5]
     follower_sd_mult_av = [0.5]
     clickbait_sd = [0]
-    posts = 50
+    posts = 5
     outputCsv = ""
     for lp in like_prob:
         for fp in foll_prob:

@@ -8,6 +8,7 @@ from numpy.random import binomial
 from ADT.DSADirectedGraph import DSADirectedGraph, DSADirectedGraphVertex
 from ADT.DSALinkedList import DSALinkedList, DSAListNode
 from ADT.DSAHeap import DSAHeap
+from ADT.DSAHashTable import *
 
 class SocialNetwork:
     # Error messages
@@ -22,8 +23,9 @@ class SocialNetwork:
             self.probFollow = probFollow
         self._network = DSADirectedGraph()
         self._mostFollowed = DSAHeap()
-        self._posts = DSALinkedList()
-        self._postLikes = DSAHeap()
+        self._currentPost = None
+        #Post likes
+        self._posts = DSAHeap()
 
     @property
     def probLike(self) -> float:
@@ -46,8 +48,8 @@ class SocialNetwork:
     def loadNetwork(self, file):
         # Remove existing network and posts
         self._network = DSADirectedGraph()
-        self._posts = DSALinkedList()
-        self._postLikes = DSAHeap()
+        self._posts = DSAHeap()
+        self._currentPost = None
         for x in file:
             formatted = x.rstrip('\n').split(':')
             if len(formatted) == 1:
@@ -84,7 +86,7 @@ class SocialNetwork:
         if len(self._posts) != 0:
             try:
                 u = self.findUser(user)
-                self._posts.peekFirst().like(u)
+                self._currentPost.like(u)
             except ValueError as e:
                 raise ValueError(SocialNetwork.USER_NOT_EXIST) from e
         else:
@@ -96,7 +98,7 @@ class SocialNetwork:
                 u = self.findUser(user)
             except ValueError as e:
                 raise ValueError(SocialNetwork.USER_NOT_EXIST) from e
-            if self._posts.peekFirst().unlike(u) is None:
+            if self._currentPost.unlike(u) is None:
                 raise ValueError("User has not liked this post.")
         else:
             raise ValueError("There are no posts to unlike.")
@@ -128,7 +130,7 @@ class SocialNetwork:
 
     def update(self):
         if self._canUpdate():
-            self._posts.peekFirst().update()
+            self._currentPost.update()
         else:
             raise ValueError("Network cannot be updated.")
 
@@ -138,15 +140,15 @@ class SocialNetwork:
     def addPost(self, userName: str, content: str, clickbaitFactor: float = 1):
         try:
             user = self.findUser(userName)
-            self._posts.insertFirst(SocialNetworkPost(user, content, self, clickbaitFactor))
-            self._postLikes.add(self._posts.peekFirst(), None)
-            user.addPost(self._posts.peekFirst())
+            self._currentPost = SocialNetworkPost(user, content, self, clickbaitFactor)
+            self._posts.add(self._currentPost, None)
+            user.addPost(self._currentPost)
         except ValueError as e:
             raise ValueError((f"Could not create post. User: {userName}, ",
                               f"Clickbait factor: {clickbaitFactor}")) from e
 
     def done(self) -> bool:
-        return len(self._posts) == 0 or self._posts.peekFirst().done()
+        return len(self._posts) == 0 or self._currentPost.done()
 
     # Statistics methods
 
@@ -157,7 +159,7 @@ class SocialNetwork:
             Network representation, most recent post representation,
             and optional statistics.
         """
-        return f"{self.save()}\n{self._posts.peekFirst().save()}\n"#{self.optionalStats()}\n"
+        return f"{self.save()}\n{self._currentPost.save()}\n"#{self.optionalStats()}\n"
 
     def optionalStats(self) -> str:
         """Outputs optional statistics about the network.
@@ -190,8 +192,9 @@ class SocialNetwork:
         for k, v in self._network:
             # Find clusting coefficient of node
             # First, find the neighbourhood
-            import copy
-            neighbourhood = copy.copy(v.successor)
+            neighbourhood = DSAHashTable()
+            for k, v in v.successor:
+                neighbourhood.put(k, v)
             for preK, preV in v.predecessor:
                 if not neighbourhood.hasKey(preK):
                     neighbourhood.put(preK, preV)
@@ -209,8 +212,8 @@ class SocialNetwork:
         return globalCoef
 
     def popularPosts(self) -> List['SocialNetworkPost']:
-        self._postLikes._heapify()
-        return [x[0] for x in self._postLikes.sort()]
+        self._posts._heapify()
+        return [x[0] for x in self._posts.sort()]
 
     def popularUsers(self) -> List['SocialNetworkUser']:
         self._mostFollowed._heapify()
@@ -452,7 +455,7 @@ class SocialNetworkTest(unittest.TestCase):
         network.addPost("Jakob", "Wow content")
         network.like("bruh")
         network.like("moment")
-        self.assertEqual(network._posts.peekFirst().save(),
+        self.assertEqual(network._currentPost.save(),
                          ("content: Wow content\n"
                           "user: Jakob\n"
                           "liked:\n"
