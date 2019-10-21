@@ -455,6 +455,7 @@ class SocialNetworkTest(unittest.TestCase):
         self.assertEqual(network._posts.peekFirst().save(),
                          ("content: Wow content\n"
                           "user: Jakob\n"
+                          "liked:\n"
                           "moment\n"
                           "bruh\n"
                           "Jakob\n"))
