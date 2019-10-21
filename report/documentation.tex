@@ -61,5 +61,28 @@ This gives $O\left(1\right)$
 performance for find, insert, and remove operations. Despite the greater overhead, in practice it was found to outperform
 the linked list implementation at a graph size of 20, approximately doubling the speed when the number of verticies was 50.
 
+Multiple \texttt{SocialNetworkPost} objects need to be stored within the \texttt{SocialNetwork} class.
+The only time all posts need to be accessed
+is when the class is queried for popular posts, which requires ordering the posts by likes.
+A simple sorting approach will have a time complexity of $O\left(n\log n\right)$. However, this
+approach requires resorting all posts every time the function is called.
+
+Storing the posts in a \texttt{DSAHeap} instead maintains
+the time complexity of $O\left(n\log n\right)$. However, if \texttt{popularPosts}
+is called multiple times, the DSAHeap is already in a sorted state, greatly reducing the runtime.
+A class field is used to cache the most recent post.
+
+As well as being stored in the \texttt{DSADirectedGraph}, users are also stored in a \texttt{DSAHeap},
+sorted by follower count. This is done to increase the efficiency of the popular users operation,
+and gives the same performance gains listed in the previous paragraph.
+One disadvantage of this strategy is that it increases the memory footprint. However, it only increases it
+by a linear factor, and does not change the space complexity of the program.
+
+Another performance optimization is that user posts are cached in a dedicated linked list per user.
+This speeds up the 'list users posts' operation, as it avoids needing to search through every post. On networks with large amounts
+of posts, this gives a significant performance increase.
+
+
+
 \section{Generated Documentation}
 \end{document}
