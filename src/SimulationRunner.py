@@ -84,9 +84,9 @@ def gridSearch(stream):
     # Like prob, follow prob, size, follower average, follower sd, clickbait_sd
     like_prob = [0.2, 0.4, 0.6, 0.8, 1]
     foll_prob = [0.2, 0.4, 0.6, 0.8, 1]
-    size = [5, 10, 20, 50]
-    follower_average_mult_sz = [0.1, 0.5, 1]
-    follower_sd_mult_av = [0, 0.5, 1]
+    size = [25]
+    follower_average_mult_sz = [0.5]
+    follower_sd_mult_av = [0.5]
     clickbait_sd = [0]
     posts = 10
     outputCsv = ""
@@ -108,7 +108,7 @@ def gridSearch(stream):
 if __name__ == "__main__":
     #print(generateSocialNetworkAndPost(size=50, follower_av=10, follower_sd=5,
     #                                                             clustering_func=lambda x: 0, post_num=10, clickbait_sd=1))
-    with open("../report/data.csv", "w") as f:
+    with open("../report/subset.csv", "w") as f:
         def printAndWrite(x):
             print(x, end='')
             f.write(x)

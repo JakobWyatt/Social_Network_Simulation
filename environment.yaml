@@ -4,3 +4,4 @@ dependencies:
   - pycodestyle
   - graphviz
   - numpy
+  - sphinx

@@ -11,6 +11,10 @@ from ADT.DSAHeap import DSAHeap
 from ADT.DSAHashTable import *
 
 class SocialNetwork:
+    """
+    The top level social network class that does everything.
+    """
+
     # Error messages
     USER_NOT_EXIST = "User does not exist."
 
@@ -188,6 +192,9 @@ class SocialNetwork:
         return avFoll, sdFoll
 
     def clusteringCoefficient(self) -> float:
+        """
+        Calculates the clustering coefficient of a graph.
+        """
         sumLocalClustering = 0
         for k, v in self._network:
             # Find clusting coefficient of node
