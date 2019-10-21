@@ -51,19 +51,19 @@ def generateSocialNetworkAndPost(*, size: int, follower_av: float, follower_sd: 
             exhausted = False
             done = False
             while len(walk) - 1 < threshold and not exhausted and not done:
-                valid_nodes = list(filter(lambda x: not walk.find(x), walk.peekFirst().predecessor))
+                valid_nodes = list(filter(lambda x: not walk.find(x), [v for _, v in walk.peekFirst().predecessor]))
                 if len(valid_nodes) == 0:
                     exhausted = True
                 else:
                     walk.insertFirst(random.choice(valid_nodes))
-                    if numpy.random.binomial(1, clustering_func(len(walk))) and (not node.successor.find(walk.peekFirst())):
+                    if numpy.random.binomial(1, clustering_func(len(walk))) and (not node.successor.hasKey(walk.peekFirst().label)):
                         done = True
                         network.addEdge(node.label, walk.peekFirst().label)
             # Follow someone random if no-one was followed during the random walk.
             if not done:
                 # Inefficient
                 possibleNodes = [f"A{x}" for x in range(size)]
-                successorLabels = [x.label for x in node.successor]
+                successorLabels = [k for k, _ in node.successor]
                 possibleNodes = list(filter(lambda x: (x not in successorLabels) and x != node.label, possibleNodes))
                 network.addEdge(node.label, random.choice(possibleNodes))
     from tempfile import NamedTemporaryFile
