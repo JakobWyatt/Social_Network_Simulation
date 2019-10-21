@@ -39,5 +39,23 @@ be exposed to it later via a different friend. This behaviour is intentional, as
 a highly connected network.
 
 \section{Justification}
+In any program, whenever an ADT or algorithm is selected for use, this use must be justified.
+Choice of an ADT must help enhance clarity, make implementation of an algorithm easier,
+and have good time and space complexity.
+
+The user network uses the \texttt{DSADirectedGraph} class to represent follows between users
+as edges. This helps to enhance clarity, as follows are inherently directional in nature.
+
+Operations that must be performed within this directed graph are find/add/remove verticies,
+and find/add/remove edges. It should also be noted that within the context of a social network,
+there only exists a maximum of one directed edge between any 2 nodes. Duplicate nodes also will not
+exist.
+To store verticies and edges within this directed graph, the \texttt{DSALinkedList} class was originally
+used to store this data. However, this ended up being rather inefficient, with a time complexity of
+$O\left(V\right)$ for vertex find/remove and $O\left(E + V\right)$ for edge find/remove.
+Although vertex add and edge add are theoretically $O\left(1\right)$, in practice they had a time complexity
+equal to vertex find and edge find, as it had to be checked that the vertex/edge did not already exist in the network.
+To improve the performance of these operations, a DSAHash
+
 \section{Generated Documentation}
 \end{document}
