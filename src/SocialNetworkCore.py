@@ -1,6 +1,7 @@
 from typing import List
 from functools import total_ordering
 import unittest
+from itertools import chain
 
 from numpy.random import binomial
 
@@ -163,7 +164,8 @@ class SocialNetwork:
         """
         followAv, followSd = self.followsAvSd()
         return (f"Likes per person per post: {self.likesScaled()}\n"
-                f"Follower Average: {followAv}\nFollower s.d: {followSd}\n")
+                f"Follower Average: {followAv}\nFollower s.d: {followSd}\n"
+                f"Clustering Coefficient: {self.clusteringCoefficient()}")
 
     def likesScaled(self) -> float:
         # Likes per person per post
@@ -175,6 +177,25 @@ class SocialNetwork:
         followNums = [len(x.successor) for x in self._network]
         return (sum(followNums) / len(followNums),
                 statistics.pstdev(followNums))
+
+    def clusteringCoefficient(self) -> float:
+        sumLocalClustering = 0
+        for node in self._network:
+            # Find clusting coefficient of node
+            # First, find the neighbourhood
+            neighbourhood = node.successor
+            for pre in node.predecessor:
+                if not neighbourhood.find(pre):
+                    neighbourhood.insertFirst(pre)
+            # Next, find the number of connections between nodes in the neighbourhood
+            connectionCount = 0
+            for n in neighbourhood:
+                for s in n.successor:
+                    if neighbourhood.find(s):
+                        connectionCount += 1
+            if len(neighbourhood) != 0 and len(neighbourhood) != 1:
+                sumLocalClustering += connectionCount / ((len(neighbourhood) - 1) * len(neighbourhood))
+        return sumLocalClustering / self._network.getVertexCount()
 
     def popularPosts(self) -> List['SocialNetworkPost']:
         self._postLikes._heapify()
