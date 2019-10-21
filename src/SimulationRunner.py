@@ -15,12 +15,14 @@ import itertools
 # and inputs.
 
 def generateSocialNetwork(*, size: int, follower_av: float, follower_sd: float,
-                          clustering_exp: float) -> str:
+                          clustering_func) -> str:
     # Clustering coefficient is HARD
     # Algorithm to calculate average local clustering coefficient:
     # 1. Count links between nodes in neighbourhood and divide by possible links in neighbourhood.
     # 2. Do this for all nodes in the network, and divide by the total number of nodes.
     # So how do we generate a network with a given clustering coefficient?
+
+    # Clustering_func imports one number and exports a number between [0, 1] for x = [0, 5]
 
     # THIS IS HOW WE DO IT
     # SO
@@ -43,18 +45,18 @@ def generateSocialNetwork(*, size: int, follower_av: float, follower_sd: float,
         for x in range(node.value):
             # Randomly walk through graph via "followed" connections, with a decreasing chance of following.
             # If an end is reached, or a certain threshold, then a random node is selected to be connected.
-            threshold = math.log(size)
+            threshold = 5
             walk = DSALinkedList()
             walk.insertLast(node)
             exhausted = False
             done = False
             while len(walk) - 1 < threshold and not exhausted and not done:
-                valid_nodes = list(filter(lambda x: (not walk.find(x)) and (not node.successor.find(x)), walk.peekFirst().predecessor))
+                valid_nodes = list(filter(lambda x: not walk.find(x), walk.peekFirst().predecessor))
                 if len(valid_nodes) == 0:
                     exhausted = True
                 else:
                     walk.insertFirst(random.choice(valid_nodes))
-                    if numpy.random.binomial(1, math.exp(-clustering_exp * len(walk))):
+                    if numpy.random.binomial(1, clustering_func(len(walk))) and (not node.successor.find(walk.peekFirst())):
                         done = True
                         network.addEdge(node.label, walk.peekFirst().label)
             # Follow someone random if no-one was followed during the random walk.
@@ -72,4 +74,4 @@ def generateSocialNetwork(*, size: int, follower_av: float, follower_sd: float,
 
 
 if __name__ == "__main__":
-    print(generateSocialNetwork(size=50, follower_av=5, follower_sd=5, clustering_exp=3))
+    print(generateSocialNetwork(size=50, follower_av=25, follower_sd=5, clustering_func=lambda x: 1))

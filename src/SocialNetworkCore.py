@@ -179,9 +179,11 @@ class SocialNetwork:
         import statistics
         followNums = [len(x.successor) for x in self._network]
         avFoll = 0
+        sdFoll = 0
         if len(followNums) != 0:
             avFoll = sum(followNums) / len(followNums)
-        return (avFoll, statistics.pstdev(followNums))
+            sdFoll = statistics.pstdev(followNums)
+        return avFoll, sdFoll
 
     def clusteringCoefficient(self) -> float:
         sumLocalClustering = 0
