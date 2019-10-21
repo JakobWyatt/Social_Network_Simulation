@@ -10,6 +10,7 @@ import errno
 
 # Simulation
 from SocialNetworkCore import SocialNetwork
+from ADT.DSALinkedList import *
 
 
 # Ben said ok
@@ -175,12 +176,17 @@ def simulation(netfile, eventfile, prob_like, prob_foll):
     from tempfile import NamedTemporaryFile
     with NamedTemporaryFile(delete=False, mode='w') as f:
         filename = f.name
-        f.write(execEventFile(network, events))
-    return filename
+        fileData, stats = execEventFile(network, events)
+        f.write(fileData)
+    return filename, stats
 
 
 def execEventFile(network, eventFile) -> str:
     outcome = ""
+    from collections import namedtuple
+    SimStats = namedtuple('SimStats', 'post likes clustering favg fsd')
+    stats = DSALinkedList()
+    post = 0
     for x in eventFile:
         tokens = x.split(':')
         if len(tokens) == 3 and tokens[0] == "F":
@@ -197,11 +203,17 @@ def execEventFile(network, eventFile) -> str:
             else:
                 network.addPost(tokens[1], tokens[2], float(tokens[3]))
             while not network.done():
+                stats.insertLast(SimStats(post, network.likesScaled(),
+                                           network.clusteringCoefficient(), *network.followsAvSd()))
                 outcome += network.simstate()
+                outcome += (f"Likes per person per post: {stats.peekFirst().likes}\n"
+                            f"Follower Average: {stats.peekFirst().favg}\nFollower s.d: {stats.peekFirst().fsd}\n"
+                            f"Clustering Coefficient: {stats.peekFirst().clustering}")
                 network.update()
+            post += 1
         else:
             raise ValueError("Invalid file format.")
-    return outcome
+    return outcome, stats
 
 
 def make_parser():
@@ -234,6 +246,9 @@ if __name__ == "__main__":
     else:
         args = parser.parse_args()
         if args.mode == "-i":
-            interactive().cmdloop()
+            try:
+                interactive().cmdloop()
+            except KeyboardInterrupt:
+                print("")
         elif args.mode == "-s":
             simulationInterface(args.netfile, args.eventfile, args.prob_like, args.prob_foll)

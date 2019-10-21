@@ -38,7 +38,7 @@ def generateSocialNetworkAndPost(*, size: int, follower_av: float, follower_sd: 
     # Add verticies
     for x in range(size):
         # Value is number of followers
-        network.addVertex(f"A{x}", max(0, int(random.gauss(follower_av, follower_sd))))
+        network.addVertex(f"A{x}", min(size - 1, max(0, int(random.gauss(follower_av, follower_sd)))))
     # Add edges
     for n in range(size):
         node = network.getVertex(f"A{n}")
@@ -79,6 +79,41 @@ def generateSocialNetworkAndPost(*, size: int, follower_av: float, follower_sd: 
     return netFilename, postFilename
 
 
+def gridSearch():
+    # Gridsearch on parameters
+    # Like prob, follow prob, size, follower average, follower sd, clickbait_sd
+    #like_prob = range(10) / 10
+    #foll_prob = range(10) / 10
+    #size = [5, 10, 20, 50]
+    #follower_average_mult_sz = [0.1, 0.5, 1]
+    #follower_sd_mult_av = [0, 0.5, 1]
+    #clickbait_sd = [0]
+    #posts = 10
+    like_prob = [1]
+    foll_prob = [1]
+    size = [20]
+    follower_average_mult_sz = [0.5]
+    follower_sd_mult_av = [0.5]
+    clickbait_sd = [0]
+    posts = 50
+    outputCsv = ""
+    for lp in like_prob:
+        for fp in foll_prob:
+            for sz in size:
+                for favg in follower_average_mult_sz:
+                    for fsd in follower_sd_mult_av:
+                        for csd in clickbait_sd:
+                            files = generateSocialNetworkAndPost(size=sz, follower_av=favg * sz, follower_sd=fsd * favg * sz,
+                                                                 clustering_func=lambda x: 0, post_num=posts, clickbait_sd=csd)
+                            with open(files[0], 'r') as net, open(files[1], 'r') as event:
+                                _, stats = simulation(net, event, lp, fp)
+                            outputCsv += f"\nlike_prob:{lp},follow_prob:{fp},size:{sz},follower_average_mult_sz:{favg},follower_sd_mult_av:{fsd},clickbait_sd:{csd}\n"
+                            outputCsv += "post,likes,clustering,favg,fsd\n"
+                            outputCsv += "\n".join([f"{x.post},{x.likes},{x.clustering},{x.favg},{x.fsd}" for x in stats])
+    return outputCsv
+
+
 if __name__ == "__main__":
-    print(generateSocialNetworkAndPost(size=50, follower_av=25, follower_sd=5, clustering_func=lambda x: 1,
-                                post_num=50, clickbait_sd=1))
+    #print(generateSocialNetworkAndPost(size=50, follower_av=10, follower_sd=5,
+    #                                                             clustering_func=lambda x: 0, post_num=10, clickbait_sd=1))
+    print(gridSearch())

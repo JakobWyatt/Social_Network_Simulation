@@ -157,7 +157,7 @@ class SocialNetwork:
             Network representation, most recent post representation,
             and optional statistics.
         """
-        return f"{self.save()}\n{self._posts.peekFirst().save()}\n{self.optionalStats()}\n"
+        return f"{self.save()}\n{self._posts.peekFirst().save()}\n"#{self.optionalStats()}\n"
 
     def optionalStats(self) -> str:
         """Outputs optional statistics about the network.
