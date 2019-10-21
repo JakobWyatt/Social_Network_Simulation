@@ -169,21 +169,27 @@ class SocialNetwork:
 
     def likesScaled(self) -> float:
         # Likes per person per post
-        return (sum([sum(1 for _ in x.liked()) for x in self._posts])
-            / (len(self._posts) * self._network.getVertexCount()))
+        averageLikes = 0
+        if len(self._posts) * self._network.getVertexCount() != 0:
+            totalLikes = sum([sum(1 for _ in x.liked()) for x in self._posts])
+            averageLikes = totalLikes / (len(self._posts) * self._network.getVertexCount())
+        return averageLikes
 
     def followsAvSd(self) -> (float, float):
         import statistics
         followNums = [len(x.successor) for x in self._network]
-        return (sum(followNums) / len(followNums),
-                statistics.pstdev(followNums))
+        avFoll = 0
+        if len(followNums) != 0:
+            avFoll = sum(followNums) / len(followNums)
+        return (avFoll, statistics.pstdev(followNums))
 
     def clusteringCoefficient(self) -> float:
         sumLocalClustering = 0
         for node in self._network:
             # Find clusting coefficient of node
             # First, find the neighbourhood
-            neighbourhood = node.successor
+            import copy
+            neighbourhood = copy.copy(node.successor)
             for pre in node.predecessor:
                 if not neighbourhood.find(pre):
                     neighbourhood.insertFirst(pre)
@@ -195,7 +201,10 @@ class SocialNetwork:
                         connectionCount += 1
             if len(neighbourhood) != 0 and len(neighbourhood) != 1:
                 sumLocalClustering += connectionCount / ((len(neighbourhood) - 1) * len(neighbourhood))
-        return sumLocalClustering / self._network.getVertexCount()
+        globalCoef = 0
+        if self._network.getVertexCount() != 0:
+            globalCoef = sumLocalClustering / self._network.getVertexCount()
+        return globalCoef
 
     def popularPosts(self) -> List['SocialNetworkPost']:
         self._postLikes._heapify()

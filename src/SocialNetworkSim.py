@@ -12,6 +12,7 @@ import errno
 from SocialNetworkCore import SocialNetwork
 
 
+# Ben said ok
 class interactive(cmd.Cmd):
     intro = "Type help or ? to list commands.\n"
     prompt = "(social-sim) "
@@ -78,8 +79,11 @@ class interactive(cmd.Cmd):
         "Follow a user: follow <followed>:<follower>"
         args = arg.split(':')
         if len(args) == 2:
-            if not self._network.follow(args[1], args[0]):
-                print(f"{args[1]} is already following {args[0]}.")
+            try:
+                if not self._network.follow(args[1], args[0]):
+                    print(f"{args[1]} is already following {args[0]}.")
+            except ValueError as ex:
+                print(str(ex))
         else:
             print("Invalid usage.")
 
