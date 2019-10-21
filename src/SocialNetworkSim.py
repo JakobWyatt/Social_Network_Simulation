@@ -162,7 +162,7 @@ class interactive(cmd.Cmd):
 
 def simulationInterface(netfile, eventfile, prob_like, prob_foll):
     try:
-        fileName = simulation(netfile, eventfile, prob_like, prob_foll)
+        fileName, _ = simulation(netfile, eventfile, prob_like, prob_foll)
         print(f"Simulation logged to {fileName}")
     except ValueError as ex:
         print(str(ex))

@@ -173,7 +173,7 @@ class SocialNetwork:
         # Likes per person per post
         averageLikes = 0
         if len(self._posts) * self._network.getVertexCount() != 0:
-            totalLikes = sum([sum(1 for _ in x.liked()) for x in self._posts])
+            totalLikes = sum([sum(1 for _ in x.priority.liked()) for x in self._posts])
             averageLikes = totalLikes / (len(self._posts) * self._network.getVertexCount())
         return averageLikes
 
@@ -207,8 +207,8 @@ class SocialNetwork:
             if len(neighbourhood) != 0 and len(neighbourhood) != 1:
                 sumLocalClustering += connectionCount / ((len(neighbourhood) - 1) * len(neighbourhood))
         globalCoef = 0
-        if self._network.getVertexCount() != 0:
-            globalCoef = sumLocalClustering / self._network.getVertexCount()
+        if self._network.getVertexCount() != 0 and self._network.getEdgeCount() != 0:
+            globalCoef = sumLocalClustering / (self._network.getVertexCount() * self._network.getEdgeCount())
         return globalCoef
 
     def popularPosts(self) -> List['SocialNetworkPost']:

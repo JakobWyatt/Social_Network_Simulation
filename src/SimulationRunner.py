@@ -79,23 +79,16 @@ def generateSocialNetworkAndPost(*, size: int, follower_av: float, follower_sd: 
     return netFilename, postFilename
 
 
-def gridSearch():
+def gridSearch(stream):
     # Gridsearch on parameters
     # Like prob, follow prob, size, follower average, follower sd, clickbait_sd
-    #like_prob = range(10) / 10
-    #foll_prob = range(10) / 10
-    #size = [5, 10, 20, 50]
-    #follower_average_mult_sz = [0.1, 0.5, 1]
-    #follower_sd_mult_av = [0, 0.5, 1]
-    #clickbait_sd = [0]
-    #posts = 10
-    like_prob = [1]
-    foll_prob = [1]
-    size = [80]
-    follower_average_mult_sz = [0.5]
-    follower_sd_mult_av = [0.5]
+    like_prob = [0.2, 0.4, 0.6, 0.8, 1]
+    foll_prob = [0.2, 0.4, 0.6, 0.8, 1]
+    size = [5, 10, 20, 50]
+    follower_average_mult_sz = [0.1, 0.5, 1]
+    follower_sd_mult_av = [0, 0.5, 1]
     clickbait_sd = [0]
-    posts = 5
+    posts = 10
     outputCsv = ""
     for lp in like_prob:
         for fp in foll_prob:
@@ -107,13 +100,16 @@ def gridSearch():
                                                                  clustering_func=lambda x: 0, post_num=posts, clickbait_sd=csd)
                             with open(files[0], 'r') as net, open(files[1], 'r') as event:
                                 _, stats = simulation(net, event, lp, fp)
-                            outputCsv += f"\nlike_prob:{lp},follow_prob:{fp},size:{sz},follower_average_mult_sz:{favg},follower_sd_mult_av:{fsd},clickbait_sd:{csd}\n"
-                            outputCsv += "post,likes,clustering,favg,fsd\n"
-                            outputCsv += "\n".join([f"{x.post},{x.likes},{x.clustering},{x.favg},{x.fsd}" for x in stats])
-    return outputCsv
+                            stream(f"\n\nlike_prob:{lp},follow_prob:{fp},size:{sz},follower_average_mult_sz:{favg},follower_sd_mult_av:{fsd},clickbait_sd:{csd}\n")
+                            stream("post,likes,clustering,favg,fsd\n")
+                            stream("\n".join([f"{x.post},{x.likes},{x.clustering},{x.favg},{x.fsd}" for x in stats]))
 
 
 if __name__ == "__main__":
     #print(generateSocialNetworkAndPost(size=50, follower_av=10, follower_sd=5,
     #                                                             clustering_func=lambda x: 0, post_num=10, clickbait_sd=1))
-    print(gridSearch())
+    with open("../report/data.csv", "w") as f:
+        def printAndWrite(x):
+            print(x, end='')
+            f.write(x)
+        gridSearch(printAndWrite)
