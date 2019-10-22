@@ -112,7 +112,7 @@ class DSALinkedList:
         return self
 
 
-class TestDSALinkedList(unittest.TestCase):
+class UnitTestDSALinkedList(unittest.TestCase):
     def testConstructorIsEmpty(self):
         ll = DSALinkedList()
         self.assertTrue(ll.isEmpty)

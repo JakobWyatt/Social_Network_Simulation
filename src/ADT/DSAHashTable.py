@@ -225,7 +225,7 @@ class DSAHashTable:
         return x
 
 
-class TestDSAHashTable(unittest.TestCase):
+class UnitTestDSAHashTable(unittest.TestCase):
     def testNextPrime(self):
         self.assertEqual(2, DSAHashTable._nextPrime(-3))
         self.assertEqual(2, DSAHashTable._nextPrime(-2))

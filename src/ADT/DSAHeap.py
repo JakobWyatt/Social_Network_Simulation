@@ -135,7 +135,7 @@ class DSAHeap:
         return iterate(self)
 
 
-class TestDSAHeap(unittest.TestCase):
+class UnitTestDSAHeap(unittest.TestCase):
     def testAddRemove(self):
         heap = DSAHeap(size=1)
         self.assertRaises(ValueError, heap.remove)

@@ -193,7 +193,7 @@ class DSADirectedGraph:
         return graph
 
 
-class TestDSADirectedGraph(unittest.TestCase):
+class UnitTestDSADirectedGraph(unittest.TestCase):
     def testAddVertex(self):
         graph = DSADirectedGraph()
         self.assertFalse(graph.hasVertex("hello"))
