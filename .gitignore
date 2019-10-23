@@ -5,4 +5,5 @@ tmp
 *.aux
 *.log
 _build/
+*.out
 
