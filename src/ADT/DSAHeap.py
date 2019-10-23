@@ -1,3 +1,9 @@
+"""
+Referencing: The code in this file is similar to the code in DSAHeap.py,
+submitted by Jakob Wyatt in prac 7. Differences include the sort method,
+arbitraryRemove method, heap resizing, and additional unittests.
+"""
+
 import unittest
 from typing import List, Tuple
 from copy import copy

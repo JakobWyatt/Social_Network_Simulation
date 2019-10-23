@@ -1,3 +1,8 @@
+"""
+Referencing: The code in this file is identical to the code in DSAHashTable.py,
+submitted by Jakob Wyatt in prac 6.
+"""
+
 import unittest
 from enum import Enum
 import numpy as np

@@ -1,3 +1,9 @@
+"""
+Referencing: The code in this file is similar to the code in linkedLists.py,
+submitted by Jakob Wyatt in prac 3. Differences include the cached list length,
+list concatanation, and additional unit tests.
+"""
+
 import typing
 import unittest
 import pickle

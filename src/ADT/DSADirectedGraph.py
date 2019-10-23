@@ -1,3 +1,9 @@
+"""
+Referencing: The original code used to implement this class was submitted
+in prac 5, in the file DSAGraph.py. Major changes have been made to the underlying
+data structure, interface, and class responsibility.
+"""
+
 import unittest
 import typing
 import numpy as np
