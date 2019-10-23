@@ -90,18 +90,21 @@ computed. These included the average/s.d. followers per user and the average num
 per user.
 One particularly interesting statistic that was calculated was the Clustering Coefficient.
 To calculate the clustering coefficient of a vertex $V$, the neighbourhood of that
-vertex is first found.
-$N = V_{successors} \bigcup V_{predecessors}$
-Next, the number of connections between nodes in this neighbourhood is found.
-$C = |{e_{jk} : v_j, v_j \in N, e_{jk} \in E}|$
-Finally, this is divided by the total number of potential connections within the neighbourhood.
-$\mathit{Clustering Coefficient} = \frac{C}{|N| \times (|N| - 1)}$
+vertex is first found.\\
+$N = V_{successors} \bigcup V_{predecessors}$\\
+Next, the number of connections between nodes in this neighbourhood is found.\\
+$C = |{e_{jk} : v_j, v_j \in N, e_{jk} \in E}|$\\
+Finally, this is divided by the total number of potential connections within the neighbourhood.\\
+$\mathit{Clustering Coefficient} = \frac{C}{|N| \times (|N| - 1)}$\\
 To find the network average clustering coefficient, the clustering coefficient
 is calculated for all verticies in the network and averaged.
 As the number of followers will always increase over time in this simulation,
 to enable comparison between clustering coefficients at different timesteps,
 the network average clustering coefficient was then divided by the number
 of edges in the graph.
+This algorithm has $O\left(n^3\right)$ execution time when hashtables are used to store
+edges and verticies, which is done in this program.
+When a linked list is used instead, this execution time degrades to $O\left(n^4\right)$.
 
 \subsection{Graph Generation}
 
@@ -112,7 +115,7 @@ with a consistent runtime complexity of $O\left(V \times E\right)$.
 
 First, a number of verticies are created.
 Next, these verticies are iterated over, and the number of successors of each
-vertex is calculated by sampling from a distribution $X ~ N\left(follower\_av, follwer\_sd^2\right)$.
+vertex is calculated by sampling from a distribution $X \sim N\left(follower\_av, follwer\_sd^2\right)$.
 
 To select the edges of the network, an approach similar in nature to a variogram
 (https://en.wikipedia.org/wiki/Variogram) was used (taken from the field of geostatistics).
@@ -146,8 +149,11 @@ an edge is created with any random vertex in the graph. This allows initial
 'bootstrapping' of the network when no edges have yet been created.
 
 \subsection{Time and Space Complexity}
-
-
+The post propogation algorithm used in this program has a time complexity of
+$O\left(V \times E\right)$. However, many algorithms that calculate statistics about the network have a much
+worse time complexity. One example is the calculation of the clustering coefficient,
+which has a time complexity of $O\left(V^3\right)$ when implemented using a hash table
+and $O\left(V^4\right)$ when implemented using a linked list.
 
 \subsection{Execution}
 The generated data for this simulation can be found in report/data.csv.
@@ -157,7 +163,7 @@ Gridsearch parameters can be changed within the gridsearch function.
 
 \section{Results}
 
-\subsection{Time}
+\subsection{Network Parameters over Time}
 It was found that clustering coefficient did not change significantly over the
 course of the simulation, and either increases or decreases by around 1\% over the course of the simulation.
 This suggests that over time, friend groups do not become more or less clustered, and remain approximately the same.
@@ -167,8 +173,8 @@ is proportional to the clustering of the group itself.
 Another result that was found was that the standard deviation of the follower count
 decreased over time in almost all cases. The only exception to this was where the
 standard deviation of the follower count was 0. This shows that, over time, the
-social network will become more equitable, with famous people becoming less popular
-over time. However, this is based off the assumption that there is no difference
+social network will become more equitable, with famous people becoming less popular.
+However, this is based off the assumption that there is no difference
 in content between x and y. This can be observed in real life.
 
 As expected, follower count and number of likes consistently increased over time.
@@ -200,10 +206,28 @@ graph generation algorithm such as ClustRNet (Bansal, Khandelwal, and Meyers, 20
 and compare the results with the current method of generating random graphs.
 This was not done due to time constraints.
 
+Only a small amount of statistics related to graphs were analysed. To improve this
+analysis in future, a wider range of statistics about the graph could be calculated at each time step,
+including but not limited to:
+\begin{itemize}
+\item Mutuality (The probability that someone is followed back)
+\item Distance (The minimum number of edges required to connect any two verticies in the graph)
+\item Centrality of highly followed users (How much influence does a node have)
+\end{itemize}
+This would allow a more in depth analysis into the factors behind social network performance, and a better
+comparison with real life networks.
+
+More work that could be done to improve this simulation would be to increase
+its complexity. One possible way of doing this could be to introduce
+individual like probabilities per user. However,
+this added complexity would not be worth the implementation time required,
+with the previous three suggestions offering greater benefit for less development
+time.
+
 \section{References}
 Xiao, Wenjun, Wenhong Wei, Weidong Chen, Yong Qin, Behrooz Parhami. 2007.
 \textit{Extended Clustering Coefficients: Generalization of Clustering Coefficients in Small-World
-Networks}. Journal of Systems Science and Systems Engineering. https://www.ece.ucsb.edu/~parhami/pubs_folder/parh07-jssse-ext-clustering-coeff.pdf
+Networks}. Journal of Systems Science and Systems Engineering. https://www.ece.ucsb.edu/~parhami/pubs\_folder/parh07-jssse-ext-clustering-coeff.pdf\\
 
 Bansal, Shweta, Shashank Khandelwal, and Lauren Ancel Meyers. 2009. \textit{Exploring Biological Network Structure with Clustered Random Networks}.
 BMC Bioinformatics. https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-10-405

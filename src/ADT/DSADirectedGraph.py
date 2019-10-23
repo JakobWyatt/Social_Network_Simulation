@@ -14,6 +14,9 @@ class DSADirectedGraphVertex:
     """
     This class contains information about a vertex, including its
     label, data, and edges.
+    The class uses terms from graph theory such as "successor" and "predecessor"
+    so that it can remain use agnostic, and can be carried over to other projects
+    that may require a graph implementation.
     This is a container class intended for use within the DSADirectedGraph
     class.
     """

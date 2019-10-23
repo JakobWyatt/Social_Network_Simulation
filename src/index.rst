@@ -19,9 +19,6 @@ Welcome to Social Network Sim's documentation!
 .. automodule:: SocialNetworkPost
    :members:
 
-.. automodule:: SocialNetworkSim
-   :members:
-
 .. automodule:: SocialNetworkSimRunner
    :members:
 

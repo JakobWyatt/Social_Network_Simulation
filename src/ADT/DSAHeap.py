@@ -39,9 +39,9 @@ class DSAHeapEntry:
 
 class DSAHeap:
     """
-    This class implements a max-heap using an array,
-    which may be used as the underlying data structure
-    for ADTs such as priority queues.
+    This class implements a max-heap using an array.
+    This gives O(nlog(n)) sort and O(log(n)) insert/remove.
+    Resizing occurs automatically when the heap is too large.
     """
 
     def __init__(self, size: int = 100, *, resizeFactor=2.0):
