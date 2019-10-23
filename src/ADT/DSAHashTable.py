@@ -4,6 +4,12 @@ import numpy as np
 from math import ceil
 
 class DSAHashEntry:
+    """
+    This class represents an entry in a DSAHashTable,
+    and contains setters and getters for entry keys,
+    values, and state.
+    """
+
     class status(Enum):
         EMPTY = -1
         USED = 0
@@ -41,6 +47,11 @@ class DSAHashEntry:
 
 
 class DSAHashTable:
+    """
+    This class is an impementation of an automatically resizing hash table,
+    with O(1) amortized insert, delete, and find operations.
+    """
+
     # autoResize allows creation of a "dumb" non-resizing table
     def __init__(self, size: int = 100, *, minLoadFactor: float = 0,
                  maxLoadFactor: float = 0.5, resizeFactor: float = 2, _autoResize = True):
@@ -226,6 +237,10 @@ class DSAHashTable:
 
 
 class UnitTestDSAHashTable(unittest.TestCase):
+    """
+    This class contains unittests for the DSAHashTable class.
+    """
+
     def testNextPrime(self):
         self.assertEqual(2, DSAHashTable._nextPrime(-3))
         self.assertEqual(2, DSAHashTable._nextPrime(-2))

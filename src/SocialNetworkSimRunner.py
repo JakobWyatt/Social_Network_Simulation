@@ -8,6 +8,13 @@ import numpy
 import itertools
 
 class SocialNetworkSimRunner:
+    """
+    This class contains miscellaneous functions used to run individual simulations,
+    orchestrate multiple simulations, and generate simulation data.
+    These were all put into one class as they had similar functionality,
+    despite not sharing any data or state between them.
+    """
+
     @staticmethod
     def SimulationInterface(netfile, eventfile, prob_like, prob_foll):
         try:
@@ -64,33 +71,38 @@ class SocialNetworkSimRunner:
                 raise ValueError("Invalid file format.")
         return outcome, stats
 
-    # Simulation Runner
-    # The idea here is that some parameters to be varied will be within the post itself,
-    # whereas some parameters to be varied will occur when the program is run
-    # First, a function will be called to generate a network file/event file with some properties
-    # This will be called multiple times in a "gridsearch" fashion, to find data relating the outputs
-    # and inputs.
     @staticmethod
     def GenerateSocialNetworkAndPost(*, size: int, follower_av: float, follower_sd: float,
                               clustering_func, post_num, clickbait_sd) -> (str, str):
-        # Clustering coefficient is HARD
-        # Algorithm to calculate average local clustering coefficient:
-        # 1. Count links between nodes in neighbourhood and divide by possible links in neighbourhood.
-        # 2. Do this for all nodes in the network, and divide by the total number of nodes.
-        # So how do we generate a network with a given clustering coefficient?
+        """
+        This method generates a social network with given parameters, and writes it
+        to a file.
+        The algorithm used to generate this network was created by the author,
+        and to their knowledge, does not exist anywhere else.
+        First, a number of verticies are created equal to the input parameter size.
+        Next, these verticies are iterated over, and the number of successors of each
+        vertex is calculated by sampling from a distribution X ~ N(follower_av, follwer_sd^2).
 
-        # Clustering_func imports one number and exports a number between [0, 1] for x = [0, 5]
+        To select the edges of the network, an approach similar in nature to a variogram
+        (https://en.wikipedia.org/wiki/Variogram) was used (taken from the field of geostatistics).
+        A variogram measures the amount of correlation between two points that are some distance apart.
+        In this algorithm, this distance is discrete rather than continuous, and is measured by finding
+        a path between two nodes.
+        This gives some way of changing the clustering coefficient of a graph, as a graph with high
+        clustering coefficient will have a higher number of connections to 'nearby' verticies.
 
-        # THIS IS HOW WE DO IT
-        # SO
-        # CREATE NODES
-        # SAMPLE BETWEEN NODES TO FIND FOLLOWERS PER NODE
-        # Don't add just one edge at a time
-        # Sample to find a random node, and add all their followers at once. Maybe follow back, depending on mutuality.
-        # Exponential distribution along a random walk of followers.
-
-        # Fuck mutuality
-
+        To sample an edge from this variogram, a random walk is performed starting at a given vertex.
+        This random walk occurs along any nodes that are predecessors of the current node,
+        and does not loop back onto previously visited nodes.
+        At each step on the random walk, the probability of adding an edge with the current vertex
+        is calculated by evaluating the clustering_func at the distance from the original node.
+        If a follow occurs, the process
+        starts again and repeats until all necessary edges have been created.
+        If there are no valid nodes to walk to,
+        or has reached some distance threshold from the original node,
+        a random node from the graph is chosen to follow. This allows initial
+        'bootstrapping' of the network when no edges have yet been created.
+        """
         network = DSADirectedGraph()
         # Add verticies
         for x in range(size):
@@ -137,8 +149,25 @@ class SocialNetworkSimRunner:
 
     @staticmethod
     def GridSearch(stream):
-        # Gridsearch on parameters
-        # Like prob, follow prob, size, follower average, follower sd, clickbait_sd
+        """
+        This method uses the gridsearch algorithm to search through a large parameter space,
+        and measure the output of a function at many points in the space.
+        These outputs are then logged to a file as csv data, and can be used for further analysis.
+
+        Parameters that are varied in this function are the like and follow probabilities,
+        network size, clickbait standard deviation, post/timestep number, and
+        follower average (density) / follower standard deviation (relative popularity).
+
+        In this algorithm, for each possible combination of the parameter arrays
+        (n-dimensional grid), a network using these parameters is generated,
+        and a simulation of that network is run..
+
+        An advantage of this algorithm is that it is very easy to implement compared to
+        other search space algorithms, such as gradient descent and evolution.
+        However, a disadvantage is that it searches a very large volume when the parameter
+        space has many dimensions (curse of dimensionality), causing a large amount of data 
+        to be produced at a very high runtime.
+        """
         like_prob = [0.2, 0.4, 0.6, 0.8, 1]
         foll_prob = [0.2, 0.4, 0.6, 0.8, 1]
         size = [25]

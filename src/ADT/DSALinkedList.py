@@ -3,12 +3,21 @@ import unittest
 import pickle
 
 class DSAListNode:
+    """
+    This class is used to represent an entry inside the DSALinkedList class.
+    """
+
     def __init__(self, data: object, prev: 'DSAListNode', next: 'DSAListNode'):
         self._data = data
         self._prev = prev
         self._next = next
 
 class DSALinkedList:
+    """
+    This class implements a doubly linked, doubly ended, linked list
+    with cached count.
+    """
+
     def __init__(self):
         self._head = None
         self._tail = None
@@ -113,6 +122,10 @@ class DSALinkedList:
 
 
 class UnitTestDSALinkedList(unittest.TestCase):
+    """
+    This class contains unittests for the DSALinkedList class.
+    """
+
     def testConstructorIsEmpty(self):
         ll = DSALinkedList()
         self.assertTrue(ll.isEmpty)

@@ -8,8 +8,19 @@ import errno
 # Simulation
 from SocialNetworkCore import SocialNetwork
 
-# Ben said ok
+
 class interactive(cmd.Cmd):
+    """
+    This class uses the python cmd module to implement an interactive
+    interpreter-like interface for the program.
+
+    It uses the SocialNetwork
+    class for storage and manipulation of the social network.
+
+    Using this module to create the user interface was approved by Ben,
+    my DSA tutor.
+    """
+
     intro = "Type help or ? to list commands.\n"
     prompt = "(social-sim) "
 

@@ -5,6 +5,13 @@ import numpy as np
 from ADT.DSAHashTable import DSAHashTable
 
 class DSADirectedGraphVertex:
+    """
+    This class contains information about a vertex, including its
+    label, data, and edges.
+    This is a container class intended for use within the DSADirectedGraph
+    class.
+    """
+
     def __init__(self, label: object, value: object):
         self._label = label
         self._value = value
@@ -64,6 +71,14 @@ class DSADirectedGraphVertex:
 
 
 class DSADirectedGraph:
+    """
+    This class is an ADT of a directed graph, and contains functionality
+    to add/remove verticies and edges from the graph.
+
+    It is currently implemented using the DSAHashTable data structure,
+    however it has been implemented using a DSALinkedList in the past.
+    """
+
     def __init__(self):
         self._verticies = DSAHashTable()
 
@@ -191,6 +206,10 @@ class DSADirectedGraph:
 
 
 class UnitTestDSADirectedGraph(unittest.TestCase):
+    """
+    This class contains unittests for the DSADirectedGraph class.
+    """
+
     def testAddVertex(self):
         graph = DSADirectedGraph()
         self.assertFalse(graph.hasVertex("hello"))

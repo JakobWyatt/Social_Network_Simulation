@@ -6,6 +6,22 @@ from ADT.DSALinkedList import *
 
 @total_ordering
 class SocialNetworkUser:
+    """
+    This class is a wrapper around a DSADirectedGraphVertex
+    that has been created by the SocialNetwork class. As such, it does not store
+    any data internally, and performs most functionality by calling corresponding
+    functions within the DSADirectedGraphVertex class.
+
+    The reason why this class was created was to create a wrapper around
+    the DSADirectedGraphVertex class, using terms specific to social networks.
+    This allows the DSADirectedGraph class to remain generic for future use.
+
+    Another advantage is that this class can be returned from functions within
+    the SocialNetwork class, which creates an external interface for user specific
+    functionality. This means that the underlying implementation of a user may be changed
+    without breaking any code that uses the SocialNetworkUser class.
+    """
+
     def __init__(self, vertex: DSADirectedGraphVertex):
         self._vertex = vertex
 

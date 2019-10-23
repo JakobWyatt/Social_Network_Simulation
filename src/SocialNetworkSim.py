@@ -1,4 +1,13 @@
-# Command line arguments
+"""
+This file is the top level file to be executed by a user of this program.
+It uses the python argparse module to process command line arguments,
+and delegates the programs execution to either py:class::SocialNetworkInteractive.interactive
+or py:class::SocialNetworkSimRunner.SocialNetworkSimRunner.SimulationInterface
+
+Use of this module has been approved by Ben, my DSA Tutor.
+"""
+
+
 import argparse
 import sys
 

@@ -1,11 +1,20 @@
 from functools import total_ordering
 
-from numpy.random import binomial
+import numpy.random
 
 from ADT.DSALinkedList import DSALinkedList
 
 @total_ordering
 class SocialNetworkPost:
+    """
+    This class represents a post on the social network, and can be queried
+    to obtain the users that have liked the post, the original poster,
+    and the post content.
+    It also contains a method func:`update`, which propogates the
+    post through the network by one timestep. The core of the propogation
+    algorithm is implemented in this method.
+    """
+
     def __init__(self, user: 'SocialNetworkUser', content: str,
                  clickbaitFactor: float, probLike: float, probFollow: float):
         self._recentlyLiked = DSALinkedList()
@@ -56,16 +65,31 @@ class SocialNetworkPost:
                 + '\n'.join([x.name() for x in self.liked()]) + '\n')
 
     def update(self) -> str:
-        # The core of the algorithm. (Finally!)
+        """
+        The update algorithm works as follows:
+        Check that there exists some users that have liked the post in the previous timestep.
+            If there are none, the update ends and the next post is loaded.
+        Iterate through all users who liked the post in the previous timestep.
+            Each of their followers is 'exposed' to the post, and have a chance of liking the post.
+            This chance is sampled from a Bernoulli distribution with probability
+            clamp(prob_like * clickbait_factor, 0, 1).
+        If a user likes a post in the current timestep, they have a chance of following the
+            original poster. This is sampled using the same technique as above, with global probability
+            prob_foll.
+
+        Note that in the above algorithm, if a user does not like a post, they may potentially
+        be exposed to it later via a different friend. This behaviour is intentional, as it incentivises
+        a highly connected network.
+        """
         newLikes = DSALinkedList()
         for x in self._recentlyLiked:
             for user in x.followers():
                 # Does the user like the post?
-                if binomial(1, min(1, self._probLike * self.clickbaitFactor)) == 1:
+                if numpy.random.binomial(1, min(1, self._probLike * self.clickbaitFactor)) == 1:
                     if not self._liked.find(user) and not self._recentlyLiked.find(user):
                         newLikes.insertFirst(user)
                     # Does the user follow the original poster?
-                    if binomial(1, self._probFollow) == 1:
+                    if numpy.random.binomial(1, self._probFollow) == 1:
                         try:
                             user.follow(self.user())
                         except ValueError:

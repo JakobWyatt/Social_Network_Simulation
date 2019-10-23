@@ -3,6 +3,10 @@ import unittest
 from SocialNetworkCore import SocialNetwork
 
 class UnitTestSocialNetwork(unittest.TestCase):
+    """
+    This class contains unittests for the SocialNetwork class.
+    """
+
     def testAddUser(self):
         network = SocialNetwork()
         network.addUser("Jakob Wyatt")

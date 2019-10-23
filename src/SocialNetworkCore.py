@@ -10,7 +10,10 @@ from ADT.DSALinkedList import *
 
 class SocialNetwork:
     """
-    The top level social network class that does everything.
+    This class contains an interface for creating and updating a social network,
+    and contains common functionality used in both interactive and simulation mode.
+    By doing this, the underlying data structures used to store the network
+    can be changed without needing to also change the user interface code. 
     """
 
     # Error messages
@@ -199,7 +202,28 @@ class SocialNetwork:
 
     def clusteringCoefficient(self) -> float:
         """
-        Calculates the clustering coefficient of a graph.
+        Calculates the globally averaged/scaled local clustering coefficient of a graph.
+        This algorithm can be found here: https://en.wikipedia.org/wiki/Clustering_coefficient
+
+        The top level description of this algorithm is that for each node,
+        a 'local clustering coeffient' is calculated. The number returned
+        from this function is the average of all local clustering coefficients
+        of the network, divided by the number of follows in the network.
+        This is done to avoid the influence increasing followers has on the clustering
+        coefficient.
+
+        To calculate the clustering coeffient of a user, the neighbourhood of the 
+        user is first found. This is defined as the union of the people that are followed by,
+        and following, the user.
+        Next, for every connection of every user in the neighbourhood, the number
+        of connections that lie within that neighbourhood are counted.
+        Finally, the number of connections within the neighbourhood are divided
+        by the total number of potential connections within the neighbourhood,
+        (neighbourhood_size * (neighbourhood_size - 1)).
+
+        This algorithm has O(n^3) execution time when hashtables are used to store
+        edges and verticies. When a linked list is used instead, this execution time jumps to
+        O(n^4).
         """
         sumLocalClustering = 0
         for k, v in self._network:

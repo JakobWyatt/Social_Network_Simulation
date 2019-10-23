@@ -5,6 +5,11 @@ import numpy as np
 
 
 class DSAHeapEntry:
+    """
+    This class is a convenience class for use within the DSAHeap class,
+    and represents a single entry in the heap.
+    """
+
     def __init__(self, priority: object, value: object):
         self._priority = priority
         self._value = value
@@ -27,6 +32,12 @@ class DSAHeapEntry:
 
 
 class DSAHeap:
+    """
+    This class implements a max-heap using an array,
+    which may be used as the underlying data structure
+    for ADTs such as priority queues.
+    """
+
     def __init__(self, size: int = 100, *, resizeFactor=2.0):
         self._resizeFactor = resizeFactor
         self._heap = np.zeros(size, dtype=object)
@@ -136,6 +147,10 @@ class DSAHeap:
 
 
 class UnitTestDSAHeap(unittest.TestCase):
+    """
+    This class contains unittests for the DSAHeap class.
+    """
+
     def testAddRemove(self):
         heap = DSAHeap(size=1)
         self.assertRaises(ValueError, heap.remove)
