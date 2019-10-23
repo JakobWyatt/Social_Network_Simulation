@@ -154,6 +154,9 @@ $O\left(V \times E\right)$. However, many algorithms that calculate statistics a
 worse time complexity. One example is the calculation of the clustering coefficient,
 which has a time complexity of $O\left(V^3\right)$ when implemented using a hash table
 and $O\left(V^4\right)$ when implemented using a linked list.
+The space complexity of this program is $O\left(V + E\right)$. Although
+a large amount of caching is used to speed up the program, none of this caching
+is non-linear in the size of the input data.
 
 \subsection{Execution}
 The generated data for this simulation can be found in report/data.csv.
@@ -163,30 +166,60 @@ Gridsearch parameters can be changed within the gridsearch function.
 
 \section{Results}
 
-\subsection{Network Parameters over Time}
 It was found that clustering coefficient did not change significantly over the
-course of the simulation, and either increases or decreases by around 1\% over the course of the simulation.
-This suggests that over time, friend groups do not become more or less clustered, and remain approximately the same.
-This makes sense, as the proportion of posts a friend group will be exposed to within the group
-is proportional to the clustering of the group itself.
+course of the simulation, and either increases or decreases by a maximum of 10\%.
+This suggests that over time, friend groups within the network do not increase
+or decrease the amount of connections within the group, relative to all other connections.
 
-Another result that was found was that the standard deviation of the follower count
-decreased over time in almost all cases. The only exception to this was where the
-standard deviation of the follower count was 0. This shows that, over time, the
-social network will become more equitable, with famous people becoming less popular.
-However, this is based off the assumption that there is no difference
-in content between x and y. This can be observed in real life.
+Follower average per person, as well as likes per person, all increased over time.
+This was expected, as there is no mechanism for unliking or unfollowing a user
+within the simulation mode, and post. These statistics increased exponentially over time;
+however, this exponential behaviour could only be observed when the probabilities
+were low. With a high probability, such as 0.5, posts often 'saturate' the network,
+and give data that is not representative of a real life situation.
 
-As expected, follower count and number of likes consistently increased over time.
-However, what is interesting is how they increased over time. (Insert graphs).
-This is applicable to social networks, where a large factor in a persons online popularity
-is related to how many posts they have.
+Follower s.d. per person also increased over time. However, when scaled with respect
+to the total number of followers, it was observed to decrease over time,
+eventually reaching a stable value. For networks with initial s.d. = 0,
+the follower s.d. per person would quickly rise to a low, stable value.
+Follower s.d. is analagous to fame within a network - the higher the s.d,
+the more people have very high or very low follower counts.
+This result shows that fame within a network generally decreases over time,
+and is a result of the network eventually reaching a state of equilibrium.
 
-\subsection{Size}
-Even when scaled for network size, the number of likes consistently increased
-when the size of the network was increased.
+When the standard deviation of the clickbait factor was increased, the standard
+deviation of the followers per person was also seen to increase over time.
+This shows that use of clickbait, within this simulation, is an effective
+tool to gain fame within the network.
+However, when the s.d. of the clickbait factor is further increased,
+the s.d. of followers per person only increases by a small amount.
+This demonstrates the law of diminishing returns.
+
+Another question that can be asked about a social network is
+the tradeoff between the like probability and the follow probability.
+If the follow probability is low, the user base will stagnate and there will
+not be as much growth on posts.
+In contrast, if the like probability is low, the company will find it difficult
+to make money. What is the best tradeoff between these two options?
+
+It can be seen from the above graphs that despite having a higher initial
+proportion of likes, the blue network stagnates and does not grow. Because of this,
+it is eventually beat by the second network, which started out with a lower proportion
+of likes, but had a higher probability of following the user.
+This shows that when creating a social network, content that is relevant
+to the user may help to grow the platform long term. By only showing
+sensationalist non-personalized content to the user, they may be less likely to follow the original poster.
+This causes stagnation and a lack of growth within a network.
 
 \section{Conclusion and Future Work}
+Despite being simple, the social network model and algorithm that was used
+in this assignment was still able to exhibit many of the properties
+that would be expected in a social network, such as friend grouping,
+fame, clickbait, and personalized content.
+One application of social network simulations could be to predict the outcome
+of a social network policy change before it is deployed.
+Another application of this simulation could be to model spread of disease, to evaluate the effectiveness
+of different methods to block the disease.
 
 Future work that could be done on this simulation involve both better
 analysis of the current data, generation of networks using different algorithms,
