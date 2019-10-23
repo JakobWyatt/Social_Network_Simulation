@@ -22,11 +22,27 @@ class SocialNetworkUser:
     def following(self) -> List['SocialNetworkUser']:
         return [SocialNetworkUser(v) for _, v in self._vertex.successor]
 
+    def follow(self, user: 'SocialNetworkUser') -> bool:
+        if self == user:
+            raise ValueError("User cannot follow themselves.")
+        ret = False
+        if not self._vertex.hasEdge(user.name()):
+            ret = True
+            self._vertex.addEdge(user._vertex)
+        return ret
+
+    def unfollow(self, user: 'SocialNetworkUser'):
+        ret = False
+        if self._vertex.hasEdge(user.name()):
+            ret = True
+            self._vertex.removeEdge(user.name())
+        return ret
+
     def name(self) -> str:
         return self._vertex.label
 
-    def __eq__(self, other):
+    def __eq__(self, other: 'SocialNetworkUser') -> bool:
         return self._vertex is other._vertex
 
-    def __lt__(self, other):
+    def __lt__(self, other: 'SocialNetworkUser') -> bool:
         return len(self.followers()) < len(other.followers())

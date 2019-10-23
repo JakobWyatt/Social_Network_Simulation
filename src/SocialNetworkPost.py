@@ -6,13 +6,14 @@ from ADT.DSALinkedList import DSALinkedList
 
 @total_ordering
 class SocialNetworkPost:
-    def __init__(self, user: 'SocialNetworkUser', content: str, network: 'SocialNetwork',
-                 clickbaitFactor):
+    def __init__(self, user: 'SocialNetworkUser', content: str,
+                 clickbaitFactor: float, probLike: float, probFollow: float):
         self._recentlyLiked = DSALinkedList()
         self._liked = DSALinkedList()
         self._recentlyLiked.insertFirst(user)
         self._content = content
-        self._network = network
+        self._probLike = probLike
+        self._probFollow = probFollow
         self.clickbaitFactor = clickbaitFactor
 
     @property
@@ -60,13 +61,13 @@ class SocialNetworkPost:
         for x in self._recentlyLiked:
             for user in x.followers():
                 # Does the user like the post?
-                if binomial(1, min(1, self._network.probLike * self.clickbaitFactor)) == 1:
+                if binomial(1, min(1, self._probLike * self.clickbaitFactor)) == 1:
                     if not self._liked.find(user) and not self._recentlyLiked.find(user):
                         newLikes.insertFirst(user)
                     # Does the user follow the original poster?
-                    if binomial(1, self._network.probFollow) == 1:
+                    if binomial(1, self._probFollow) == 1:
                         try:
-                            self._network.follow(user.name(), self.user().name())
+                            user.follow(self.user())
                         except ValueError:
                             pass
         self._liked = self._recentlyLiked.concat(self._liked)

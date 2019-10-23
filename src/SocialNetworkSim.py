@@ -111,8 +111,8 @@ class interactive(cmd.Cmd):
         else:
             print("Invalid usage.")
 
-    def do_new_post(self, arg):
-        'Create a new post: new_post <name>:<content>:<(optional) clickbaitFactor>'
+    def do_post(self, arg):
+        'Create a new post: post <name>:<content>:<(optional) clickbaitFactor>'
         args = arg.split(':')
         try:
             if len(args) == 2:
@@ -124,20 +124,20 @@ class interactive(cmd.Cmd):
         except ValueError as ex:
             print(str(ex))
 
-    def do_display_network(self, arg):
-        'Display the social network: display_network'
+    def do_display(self, arg):
+        'Display the social network: display'
         self._network.display()
 
-    def do_display_stats(self, arg):
-        'Display social network statistics: display_stats'
+    def do_stats(self, arg):
+        'Display social network statistics: stats'
         print(self._network.optionalStats())
 
-    def do_popular_posts(self, arg):
-        'Display posts in order of popularity: popular_posts'
+    def do_posts(self, arg):
+        'Display posts in order of popularity: posts'
         [print(f"user: {x.user().name()}\ncontent: {x.content}\nlikes: {sum(1 for _ in x.liked())}\n") for x in self._network.popularPosts()]
 
-    def do_popular_users(self, arg):
-        'Display users in order of popularity: popular_users'
+    def do_users(self, arg):
+        'Display users in order of popularity: users'
         [print(f"user: {x.name()}\nfollowers: {len(x.followers())}\n") for x in self._network.popularUsers()]
 
     def do_update(self, arg):

@@ -64,25 +64,31 @@ class SocialNetwork:
             else:
                 raise ValueError("Invalid file.")
 
-    def follow(self, follower: str, followed: str):
-        # Return false if the user is already following
-        ret = True
-        if follower == followed:
-            raise ValueError("User cannot follow themselves.")
-        if self._network.hasEdge(follower, followed):
-            ret = False
-        else:
-            try:
-                self._network.addEdge(follower, followed)
-            except ValueError as e:
-                raise ValueError(SocialNetwork.USER_NOT_EXIST) from e
-        return ret
-
-    def unfollow(self, follower: str, followed: str):
+    def follow(self, follower: str, followed: str) -> bool:
+        ret = False
+        user1 = None
+        user2 = None
         try:
-            self._network.removeEdge(follower, followed)
+            user1 = SocialNetworkUser(self._network.getVertex(follower))
+            user2 = SocialNetworkUser(self._network.getVertex(followed))
         except ValueError as e:
             raise ValueError(SocialNetwork.USER_NOT_EXIST) from e
+        if user1 is not None and user2 is not None:
+            ret = user1.follow(user2)
+        return ret
+
+    def unfollow(self, follower: str, followed: str) -> bool:
+        ret = False
+        user1 = None
+        user2 = None
+        try:
+            user1 = SocialNetworkUser(self._network.getVertex(follower))
+            user2 = SocialNetworkUser(self._network.getVertex(followed))
+        except ValueError as e:
+            raise ValueError(SocialNetwork.USER_NOT_EXIST) from e
+        if user1 is not None and user2 is not None:
+            ret = user1.unfollow(user2)
+        return ret
 
     def like(self, user: str):
         if len(self._posts) != 0:
@@ -142,7 +148,7 @@ class SocialNetwork:
     def addPost(self, userName: str, content: str, clickbaitFactor: float = 1):
         try:
             user = self.findUser(userName)
-            self._currentPost = SocialNetworkPost(user, content, self, clickbaitFactor)
+            self._currentPost = SocialNetworkPost(user, content, clickbaitFactor, self.probLike, self.probFollow)
             self._posts.add(self._currentPost, None)
             user.addPost(self._currentPost)
         except ValueError as e:

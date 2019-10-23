@@ -10,7 +10,6 @@ class DSADirectedGraphVertex:
         self._value = value
         self._successor = DSAHashTable()
         self._predecessor = DSAHashTable()
-        self._visited = False
 
     @property
     def label(self) -> object:
@@ -21,7 +20,7 @@ class DSADirectedGraphVertex:
         return self._value
 
     @property
-    def successor(self) -> 'DSALinkedList':
+    def successor(self) -> 'DSAHashTable':
         return self._successor
 
     def addSuccessor(self, vertex: 'DSADirectedGraphVertex') -> None:
@@ -31,7 +30,7 @@ class DSADirectedGraphVertex:
         self._successor.remove(vertex.label)
 
     @property
-    def predecessor(self) -> 'DSALinkedList':
+    def predecessor(self) -> 'DSAHashTable':
         return self._predecessor
 
     def addPredecessor(self, vertex: 'DSADirectedGraphVertex') -> None:
@@ -40,13 +39,17 @@ class DSADirectedGraphVertex:
     def removePredecessor(self, vertex: 'DSADirectedGraphVertex') -> None:
         self._predecessor.remove(vertex.label)
 
-    @property
-    def visited(self) -> bool:
-        return self._visited
+    def addEdge(self, vertex: 'DSADirectedGraphVertex') -> None:
+        self.addSuccessor(vertex)
+        vertex.addPredecessor(self)
 
-    @visited.setter
-    def visited(self, visited: bool) -> None:
-        self._visited = bool(visited)
+    def hasEdge(self, label: str) -> bool:
+        return self.successor.hasKey(label)
+
+    def removeEdge(self, label: str) -> None:
+        vertex = self.successor.get(label)
+        self.removeSuccessor(vertex)
+        vertex.removePredecessor(self)
 
     def __str__(self) -> str:
         return ("{label},{value}:{adj}"
@@ -79,19 +82,13 @@ class DSADirectedGraph:
         self._verticies.remove(vertex.label)
 
     def addEdge(self, label1: object, label2: object) -> None:
-        vertex1 = self.getVertex(label1)
-        vertex2 = self.getVertex(label2)
-        vertex1.addSuccessor(vertex2)
-        vertex2.addPredecessor(vertex1)
+        self.getVertex(label1).addEdge(self.getVertex(label2))
 
-    def hasEdge(self, label1: object, label2: object) -> None:
-        return self.getVertex(label1).successor.hasKey(label2)
+    def hasEdge(self, label1: object, label2: object) -> bool:
+        return self.getVertex(label1).hasEdge(label2)
 
     def removeEdge(self, label1: object, label2: object) -> None:
-        vertex1 = self.getVertex(label1)
-        vertex2 = self.getVertex(label2)
-        vertex1.removeSuccessor(vertex2)
-        vertex2.removePredecessor(vertex1)
+        self.getVertex(label1).removeEdge(label2)
 
     def hasVertex(self, label: object) -> bool:
         return self._verticies.hasKey(label)
@@ -108,10 +105,10 @@ class DSADirectedGraph:
     def getVertex(self, label: object) -> 'DSADirectedGraphVertex':
         return self._verticies.get(label)
 
-    def getSuccessor(self, label: object) -> 'DSALinkedList':
+    def getSuccessor(self, label: object) -> 'DSAHashTable':
         return self.getVertex(label).successor
 
-    def getPredecessor(self, label: object) -> 'DSALinkedList':
+    def getPredecessor(self, label: object) -> 'DSAHashTable':
         return self.getVertex(label).predecessor
 
     def isSuccessor(self, label1: object, label2: object) -> bool:
@@ -265,54 +262,6 @@ class UnitTestDSADirectedGraph(unittest.TestCase):
         self.assertEqual(graph.getEdgeCount(), 2)
         graph.addEdge("yeah", "world")
         self.assertEqual(graph.getEdgeCount(), 3)
-
-    def d_testListDisplay(self):
-        graph = DSADirectedGraph()
-        graph.addVertex("hello", "world")
-        graph.addVertex("world", "hello")
-        graph.addVertex("yeah", "boi")
-
-        graph.addEdge("hello", "world")
-        graph.addEdge("yeah", "hello")
-        graph.addEdge("yeah", "world")
-
-        self.assertEqual(graph.displayAsList(),
-                        ("yeah,boi:world hello\n"
-                         "world,hello:\n"
-                         "hello,world:world\n"))
-
-    def d_testMatrixDisplay(self):
-        graph = DSADirectedGraph()
-        graph.addVertex("hello", "world")
-        graph.addVertex("world", "hello")
-        graph.addVertex("yeah", "boi")
-
-        graph.addEdge("hello", "world")
-        graph.addEdge("yeah", "hello")
-        graph.addEdge("yeah", "world")
-
-        self.assertEqual(graph.displayAsMatrix(),
-                        ("      yeah  world hello \n"
-                         "yeah  0     1     1\n"
-                         "world 0     0     0\n"
-                         "hello 0     1     0\n"))
-
-    def d_testDisplay(self):
-        graph = DSADirectedGraph()
-        graph.addVertex("hello", "world")
-        graph.addVertex("world", "hello")
-        graph.addVertex("yeah", "boi")
-
-        graph.addEdge("hello", "world")
-        graph.addEdge("yeah", "hello")
-        graph.addEdge("yeah", "world")
-
-        self.assertEqual(graph.display(),
-                        ("digraph {\n"
-                         "yeah -> world\n"
-                         "yeah -> hello\n"
-                         "hello -> world\n"
-                         "}\n"))
 
     def testReadGraphFile(self):
         readGraph = DSADirectedGraph.readGraphFile("prac6_1.al")
