@@ -1,8 +1,6 @@
-from SocialNetworkSim import simulation
 from ADT.DSADirectedGraph import *
 from ADT.DSALinkedList import *
 from SocialNetworkCore import SocialNetwork
-from ADT.DSALinkedList import *
 
 import random
 import math
@@ -20,7 +18,7 @@ class SocialNetworkSimRunner:
             raise ex
 
     @staticmethod
-    def Simulation(netfile, eventfile, prob_like, prob_foll):
+    def Simulation(netfile, eventfile, prob_like, prob_foll) -> (str, DSALinkedList):
         network = SocialNetwork(probLike=prob_like, probFollow=prob_foll)
         network.loadNetwork(netfile)
         events = [x.rstrip('\n') for x in eventfile]
@@ -32,7 +30,7 @@ class SocialNetworkSimRunner:
         return filename, stats
 
     @staticmethod
-    def ExecEventFile(network, eventFile) -> str:
+    def ExecEventFile(network, eventFile) -> (str, DSALinkedList):
         outcome = ""
         from collections import namedtuple
         SimStats = namedtuple('SimStats', 'post likes clustering favg fsd')
@@ -74,7 +72,7 @@ class SocialNetworkSimRunner:
     # and inputs.
     @staticmethod
     def GenerateSocialNetworkAndPost(*, size: int, follower_av: float, follower_sd: float,
-                              clustering_func, post_num, clickbait_sd) -> str:
+                              clustering_func, post_num, clickbait_sd) -> (str, str):
         # Clustering coefficient is HARD
         # Algorithm to calculate average local clustering coefficient:
         # 1. Count links between nodes in neighbourhood and divide by possible links in neighbourhood.

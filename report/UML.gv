@@ -1,0 +1,146 @@
+digraph Social_Network_Sim {
+    node [
+        shape = "record"
+    ]
+
+    unittestTestCase [label = "unittest.TestCase"]
+    DSADirectedGraph [label = "DSADirectedGraph"]
+    DSAHeap [label = "DSAHeap"]
+    DSALinkedList [label="DSALinkedList"]
+
+    SocialNetworkUser [
+        label = <{SocialNetworkUser
+        |- _vertex: DSADirectedGraphVertex
+        <br align="left"/>|+ posts(): DSALinkedList
+        <br align="left"/>+ addPost(SocialNetworkPost): None
+        <br align="left"/>+ followers(): List[SocialNetworkUser]
+        <br align="left"/>+ following(): List[SocialNetworkUser]
+        <br align="left"/>+ follow(SocialNetworkUser): bool
+        <br align="left"/>+ unfollow(SocialNetworkUser): bool
+        <br align="left"/>+ name(): str
+        <br align="left"/>+ __eq__(SocialNetworkUser): bool
+        <br align="left"/>+ __lt__(SocialNetworkUser): bool<br align="left"/>}>
+    ]
+    
+    SocialNetworkPost [
+        label = "{SocialNetworkPost
+        |\l- _recentlyLiked: DSALinkedList
+        \l- _liked = DSALinkedList
+        \l- _content: str
+        \l- _probLike: float
+        \l- _probFollow: float
+        \l- _clickbaitFactor: float\l
+        |+ clickbaitFactor: float
+        \l+ content: str
+        \l+ user(): SocialNetworkUser
+        \l+ like(user: SocialNetworkUser): None
+        \l+ unlike(user: SocialNetworkUser): None
+        \l+ done(): bool
+        \l+ save(): str
+        \l+ update(): str
+        \l+ liked(): Iterable
+        \l+ __eq__(SocialNetworkPost): bool
+        \l+ __lt__(SocialNetworkPost): bool\l}"
+    ]
+
+    SocialNetwork [
+        label = <{SocialNetwork
+        |- _probLike: float
+        <br align="left"/>- _probFollow: float
+        <br align="left"/>- _network: DSADirectedGraph
+        <br align="left"/>- _mostFollowed: DSAHeap
+        <br align="left"/>- _posts: DSAHeap
+        <br align="left"/>- _currentPost: SocialNetworkPost
+        <br align="left"/>- _canUpdate(): bool
+        <br align="left"/>|+ probLike: float
+        <br align="left"/>+ probFollow: float
+        <br align="left"/>+ loadNetwork(file: File): None
+        <br align="left"/>+ follow(follower: str, followed: str): bool
+        <br align="left"/>+ unfollow(follower: str, followed: str): bool
+        <br align="left"/>+ like(user: str): None
+        <br align="left"/>+ unlike(user: str): None
+        <br align="left"/>+ addUser(user: str): None
+        <br align="left"/>+ removeUser(user: str): None
+        <br align="left"/>+ findUser(user: str): SocialNetworkUser
+        <br align="left"/>+ display(): None
+        <br align="left"/>+ update(): None
+        <br align="left"/>+ save(): str
+        <br align="left"/>+ addPost(userName: str, content: str, clickbaitFactor: float): None
+        <br align="left"/>+ done(): bool
+        <br align="left"/>+ simstate(): str
+        <br align="left"/>+ optionalStats(): str
+        <br align="left"/>+ likesScaled(): float
+        <br align="left"/>+ followsAvSd(): float, float
+        <br align="left"/>+ clusteringCoefficient(): float
+        <br align="left"/>+ popularPosts(): List[SocialNetworkPost]
+        <br align="left"/>+ popularUsers(): List[SocialNetworkUser]<br align="left"/>}>
+    ]
+
+    interactive [
+        label = "{interactive
+        |\l- _network: SocialNetwork
+        |+ do_load(arg: str): None
+        \l+ do_find_user(arg: str): None
+        \l+ do_add_user(arg: str): None
+        \l+ do_remove_user(arg: str): None
+        \l+ do_like(arg: str): None
+        \l+ do_unlike(arg: str): None
+        \l+ do_follow(arg: str): None
+        \l+ do_unfollow(arg: str): None
+        \l+ do_prob(arg: str): None
+        \l+ do_post(arg: str): None
+        \l+ do_display(arg: str): None
+        \l+ do_stats(arg: str): None
+        \l+ do_posts(arg: str): None
+        \l+ do_users(arg: str): None
+        \l+ do_update(arg: str): None
+        \l+ do_save(arg: str): None
+        \l+ do_exit(arg: str): bool\l}"
+    ]
+
+    cmd [
+        label = "cmd.Cmd"
+    ]
+
+    SocialNetworkSimRunner [
+        label = <{SocialNetworkSimRunner
+        |<u>+ SimulationInterface(netfile: File, eventfile: File, prob_like: float, prob_foll: float): None</u>
+        <br align="left"/><u>+ Simulation(netfile: File, eventfile: File, prob_like: float, prob_foll: float): (str, DSALinkedList)</u>
+        <br align="left"/><u>+ ExecEventFile(network: SocialNetwork, eventfile: File): (str, DSALinkedList)</u>
+        <br align="left"/><u>+ GenerateSocialNetworkAndPost(size: int, follower_av: float, follower_sd: float, clustering_func, post_num: int, clickbait_sd: float): (str, str)</u>
+        <br align="left"/><u>+ GridSearch(stream): None</u><br align="left"/>}>
+    ]
+
+    UnitTestSocialNetwork [
+        label = "{UnitTestSocialNetwork
+        |+ testAddUser(): None
+        \l+ testFindUser(): None
+        \l+ testFollow(): None
+        \l+ testUnfollow(): None
+        \l+ testNewPost(): None
+        \l+ testLikeUnlike(): None
+        \l+ d_testLoadSaveNetwork(): None
+        \l+ testSavePost(): None
+        \l+ testPopularUser(): None}"
+    ]
+
+    UnitTestSocialNetwork -> unittestTestCase [arrowhead = "empty"]
+    UnitTestSocialNetwork -> SocialNetwork [arrowhead = "vee"]
+
+    SocialNetworkSimRunner -> SocialNetwork [arrowhead = "vee"]
+    SocialNetworkSimRunner -> DSADirectedGraph [arrowhead = "vee"]
+    SocialNetworkSimRunner -> DSALinkedList [arrowhead = "vee"]
+
+    interactive -> cmd [arrowhead = "empty"]
+    SocialNetwork -> interactive [arrowhead = "diamond"]
+
+    DSADirectedGraph -> SocialNetwork [arrowhead = "diamond"]
+    DSAHeap -> SocialNetwork [arrowhead = "diamond"]
+    SocialNetworkPost -> SocialNetwork [arrowhead = "diamond"]
+
+    DSADirectedGraphVertex -> SocialNetworkUser [arrowhead = "diamond"]
+    DSALinkedList -> SocialNetworkPost [arrowhead = "diamond"]
+    SocialNetworkUser -> SocialNetworkPost [arrowhead = "diamond"]
+
+    rankdir=BT
+}

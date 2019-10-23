@@ -35,7 +35,8 @@ class SocialNetwork:
 
     @probLike.setter
     def probLike(self, prob: float):
-        SocialNetwork._checkProb(prob)
+        if prob < 0 or prob > 1:
+            raise ValueError("Probabilities must be in the range [0, 1]")
         self._probLike = prob
 
     @property
@@ -44,7 +45,8 @@ class SocialNetwork:
 
     @probFollow.setter
     def probFollow(self, prob: float):
-        SocialNetwork._checkProb(prob)
+        if prob < 0 or prob > 1:
+            raise ValueError("Probabilities must be in the range [0, 1]")
         self._probFollow = prob
 
     def loadNetwork(self, file):
@@ -231,15 +233,8 @@ class SocialNetwork:
         return [x[0] for x in self._mostFollowed.sort()]
 
     # Private methods
-
-    @staticmethod
-    def _checkProb(prob):
-        if prob < 0 or prob > 1:
-            raise ValueError("Probabilities must be in the range [0, 1]")
-
     def _canUpdate(self) -> bool:
         return (self._probFollow != -1.0
                 and self._probLike != -1.0
                 and self._network.getVertexCount() != 0
                 and not self.done())
-
