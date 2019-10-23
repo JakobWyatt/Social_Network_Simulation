@@ -170,9 +170,9 @@ class SocialNetworkSimRunner:
         """
         like_prob = [0.2, 0.4, 0.6, 0.8, 1]
         foll_prob = [0.2, 0.4, 0.6, 0.8, 1]
-        size = [25]
-        follower_average_mult_sz = [0.5]
-        follower_sd_mult_av = [0.5]
+        size = [5, 10, 20, 50]
+        follower_average_mult_sz = [0.1, 0.5, 1]
+        follower_sd_mult_av = [0, 0.5, 1]
         clickbait_sd = [0]
         posts = 10
         outputCsv = ""
