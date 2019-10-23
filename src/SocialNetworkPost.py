@@ -86,7 +86,7 @@ class SocialNetworkPost:
             for user in x.followers():
                 # Does the user like the post?
                 if numpy.random.binomial(1, min(1, self._probLike * self.clickbaitFactor)) == 1:
-                    if not self._liked.find(user) and not self._recentlyLiked.find(user):
+                    if not self._liked.find(user) and not self._recentlyLiked.find(user) and not newLikes.find(user):
                         newLikes.insertFirst(user)
                     # Does the user follow the original poster?
                     if numpy.random.binomial(1, self._probFollow) == 1:
