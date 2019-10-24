@@ -3,6 +3,7 @@ import unittest
 from SocialNetworkCore import SocialNetwork
 from SocialNetworkSimRunner import SocialNetworkSimRunner
 
+
 class UnitTestSocialNetwork(unittest.TestCase):
     """
     This class contains unittests for the SocialNetwork class.
@@ -36,7 +37,8 @@ class UnitTestSocialNetwork(unittest.TestCase):
         self.assertEqual(len(user.following()), 1)
         self.assertEqual(len(imag.followers()), 1)
         self.assertEqual(len(imag.following()), 0)
-        self.assertRaises(ValueError, network.follow, "Jakob Wyatt", "Non existent")
+        self.assertRaises(ValueError, network.follow,
+                          "Jakob Wyatt", "Non existent")
         network.follow("Imagination", "Jakob Wyatt")
         self.assertEqual(len(user.followers()), 1)
         self.assertEqual(len(user.following()), 1)
@@ -97,7 +99,8 @@ class UnitTestSocialNetwork(unittest.TestCase):
         network.like("Tom")
         network.like("Ben")
         network.addPost("Jakob", "meme")
-        for x1, x2 in zip(network.popularPosts(), ["bad content", "In bali atm", "meme"]):
+        for x1, x2 in zip(network.popularPosts(),
+                          ["bad content", "In bali atm", "meme"]):
             self.assertEqual(x2, x1.content)
 
     def d_testLoadSaveNetwork(self):
@@ -106,7 +109,8 @@ class UnitTestSocialNetwork(unittest.TestCase):
         with open("../example/dark_crystal_net.txt", "r") as f:
             network.loadNetwork(f)
             network2.loadNetwork(network.save().split('\n'))
-            for x1, x2 in zip(network2.save().split('\n'), network.save().split('\n')):
+            for x1, x2 in zip(network2.save().split('\n'),
+                              network.save().split('\n')):
                 self.assertEqual(x1.rstrip('\n'), x2.rstrip('\n'))
 
     def testSavePost(self):
@@ -154,8 +158,11 @@ class UnitTestSocialNetwork(unittest.TestCase):
 
     def testPropogatePost(self):
         # Algorithm is deterministic when probabilities = 1
-        with open("../example/doremi.net", 'r') as net, open("../example/doremi.e2", 'r') as event, open("../example/doremi.e2.output", 'r') as expected:
-            outputFile = SocialNetworkSimRunner.SimulationInterface(net, event, 1, 1)
+        with open("../example/doremi.net", 'r') as net, \
+             open("../example/doremi.e2", 'r') as event, \
+             open("../example/doremi.e2.output", 'r') as expected:
+            outputFile = (SocialNetworkSimRunner.
+                          SimulationInterface(net, event, 1, 1))
             with open(outputFile, 'r') as out:
                 for x1, x2 in zip(out, expected):
                     self.assertEqual(x1, x2)
