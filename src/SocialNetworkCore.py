@@ -120,7 +120,7 @@ class SocialNetwork:
 
     def addUser(self, user: str):
         if self._network.hasVertex(user):
-            raise ValueError("User already exists.")
+            raise ValueError(f"User {user} already exists.")
         # Value is cached posts
         self._network.addVertex(user, DSALinkedList())
         self._mostFollowed.add(self.findUser(user), None)

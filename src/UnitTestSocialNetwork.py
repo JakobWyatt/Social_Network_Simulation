@@ -1,6 +1,7 @@
 import unittest
 
 from SocialNetworkCore import SocialNetwork
+from SocialNetworkSimRunner import SocialNetworkSimRunner
 
 class UnitTestSocialNetwork(unittest.TestCase):
     """
@@ -150,6 +151,14 @@ class UnitTestSocialNetwork(unittest.TestCase):
         network.follow("b", "d")
         for x1, x2 in zip(network.popularUsers(), ['d', 'b']):
             self.assertEqual(x1.name(), x2)
+
+    def testPropogatePost(self):
+        # Algorithm is deterministic when probabilities = 1
+        with open("../example/doremi.net", 'r') as net, open("../example/doremi.e2", 'r') as event, open("../example/doremi.e2.output", 'r') as expected:
+            outputFile = SocialNetworkSimRunner.SimulationInterface(net, event, 1, 1)
+            with open(outputFile, 'r') as out:
+                for x1, x2 in zip(out, expected):
+                    self.assertEqual(x1, x2)
 
 
 if __name__ == "__main__":

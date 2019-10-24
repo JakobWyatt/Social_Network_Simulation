@@ -49,9 +49,12 @@ if __name__ == "__main__":
             if args.mode == "-i":
                 interactive().cmdloop()
             elif args.mode == "-s":
-                SocialNetworkSimRunner.SimulationInterface(args.netfile,
-                                                           args.eventfile,
-                                                           args.prob_like,
-                                                           args.prob_foll)
+                filename = (SocialNetworkSimRunner.
+                            SimulationInterface(args.netfile,
+                                                args.eventfile,
+                                                args.prob_like,
+                                                args.prob_foll))
+                if filename is not None:
+                    print(f"Simulation logged to {filename}")
         except KeyboardInterrupt:
             print("")

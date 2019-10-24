@@ -21,6 +21,7 @@ class SocialNetworkSimRunner:
 
     @staticmethod
     def SimulationInterface(netfile, eventfile, prob_like, prob_foll):
+        filename = None
         try:
             state = SocialNetworkSimRunner.Simulation(netfile, eventfile,
                                                       prob_like, prob_foll)
@@ -31,11 +32,10 @@ class SocialNetworkSimRunner:
                             f"Likes per person per post: {x.likes}\n"
                             f"Follower Average: {x.favg}\n"
                             f"Follower s.d: {x.fsd}\n"
-                            f"Clustering Coefficient: {x.clustering}\n")
-            print(f"Simulation logged to {filename}")
+                            f"Clustering Coefficient: {x.clustering}\n\n")
         except ValueError as ex:
             print(str(ex))
-            raise ex
+        return filename
 
     @staticmethod
     def Simulation(netfile, eventfile, prob_like, prob_foll) -> DSALinkedList:
@@ -59,7 +59,10 @@ class SocialNetworkSimRunner:
             elif len(tokens) == 3 and tokens[0] == "U":
                 network.unfollow(tokens[2], tokens[1])
             elif len(tokens) == 2 and tokens[0] == "A":
-                network.addUser(tokens[1])
+                try:
+                    network.addUser(tokens[1])
+                except ValueError as ex:
+                    print(str(ex))
             elif len(tokens) == 2 and tokens[0] == "R":
                 network.removeUser(tokens[1])
             elif len(tokens) == 3 or len(tokens) == 4 and tokens[0] == "P":

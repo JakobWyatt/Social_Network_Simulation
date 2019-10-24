@@ -1,0 +1,830 @@
+Re
+Mi
+Do
+Do:Re
+Re:Mi
+
+content: Doe, a deer, a female deer
+user: Do
+liked:
+Do
+
+Likes per person per post: 0.3333333333333333
+Follower Average: 0.6666666666666666
+Follower s.d: 0.4714045207910317
+Clustering Coefficient: 0.16666666666666666
+
+Re
+Mi
+Do
+Do:Re
+Re:Mi
+
+content: Doe, a deer, a female deer
+user: Do
+liked:
+Re
+Do
+
+Likes per person per post: 0.6666666666666666
+Follower Average: 0.6666666666666666
+Follower s.d: 0.4714045207910317
+Clustering Coefficient: 0.16666666666666666
+
+Re
+Mi
+Do
+Do:Re
+Re:Mi
+Do:Mi
+
+content: Doe, a deer, a female deer
+user: Do
+liked:
+Mi
+Re
+Do
+
+Likes per person per post: 1.0
+Follower Average: 1.0
+Follower s.d: 0.816496580927726
+Clustering Coefficient: 0.16666666666666666
+
+Re
+Mi
+Do
+Do:Re
+Re:Mi
+Do:Mi
+
+content: Ray, a drop of golden sun
+user: Re
+liked:
+Re
+
+Likes per person per post: 0.6666666666666666
+Follower Average: 1.0
+Follower s.d: 0.816496580927726
+Clustering Coefficient: 0.16666666666666666
+
+Re
+Mi
+Do
+Do:Re
+Re:Mi
+Do:Mi
+
+content: Ray, a drop of golden sun
+user: Re
+liked:
+Mi
+Re
+
+Likes per person per post: 0.8333333333333334
+Follower Average: 1.0
+Follower s.d: 0.816496580927726
+Clustering Coefficient: 0.16666666666666666
+
+Re
+Mi
+Do
+Do:Re
+Re:Mi
+Do:Mi
+
+content: Me, a name I call myself
+user: Mi
+liked:
+Mi
+
+Likes per person per post: 0.6666666666666666
+Follower Average: 1.0
+Follower s.d: 0.816496580927726
+Clustering Coefficient: 0.16666666666666666
+
+Re
+La
+Fa
+So
+Mi
+Ti
+Do
+Do:Re
+So:La
+Mi:Fa
+Fa:So
+Re:Mi
+Do:Mi
+La:Ti
+
+content: Far, a long, long way to run
+user: Fa
+liked:
+Fa
+
+Likes per person per post: 0.25
+Follower Average: 1.0
+Follower s.d: 0.5345224838248488
+Clustering Coefficient: 0.07142857142857142
+
+Re
+La
+Fa
+So
+Mi
+Ti
+Do
+Do:Re
+So:La
+Mi:Fa
+Fa:So
+Re:Mi
+Do:Mi
+La:Ti
+
+content: Far, a long, long way to run
+user: Fa
+liked:
+So
+Fa
+
+Likes per person per post: 0.2857142857142857
+Follower Average: 1.0
+Follower s.d: 0.5345224838248488
+Clustering Coefficient: 0.07142857142857142
+
+Re
+La
+Fa
+So
+Mi
+Ti
+Do
+Do:Re
+Fa:La
+So:La
+Mi:Fa
+Fa:So
+Re:Mi
+Do:Mi
+La:Ti
+
+content: Far, a long, long way to run
+user: Fa
+liked:
+La
+So
+Fa
+
+Likes per person per post: 0.32142857142857145
+Follower Average: 1.1428571428571428
+Follower s.d: 0.6388765649999399
+Clustering Coefficient: 0.0625
+
+Re
+La
+Fa
+So
+Mi
+Ti
+Do
+Do:Re
+Fa:La
+So:La
+Mi:Fa
+Fa:So
+Re:Mi
+Do:Mi
+La:Ti
+Fa:Ti
+
+content: Far, a long, long way to run
+user: Fa
+liked:
+Ti
+La
+So
+Fa
+
+Likes per person per post: 0.35714285714285715
+Follower Average: 1.2857142857142858
+Follower s.d: 0.6998542122237652
+Clustering Coefficient: 0.052910052910052914
+
+Re
+La
+Fa
+So
+Mi
+Ti
+Do
+Do:Re
+Fa:La
+So:La
+Mi:Fa
+Fa:So
+Re:Mi
+Do:Mi
+La:Ti
+Fa:Ti
+So:Do
+
+content: Sew, a needle pulling thread
+user: So
+liked:
+So
+
+Likes per person per post: 0.3142857142857143
+Follower Average: 1.4285714285714286
+Follower s.d: 0.4948716593053935
+Clustering Coefficient: 0.04285714285714286
+
+Re
+La
+Fa
+So
+Mi
+Ti
+Do
+Do:Re
+Fa:La
+So:La
+Mi:Fa
+Fa:So
+Re:Mi
+Do:Mi
+La:Ti
+Fa:Ti
+So:Do
+
+content: Sew, a needle pulling thread
+user: So
+liked:
+Do
+La
+So
+
+Likes per person per post: 0.37142857142857144
+Follower Average: 1.4285714285714286
+Follower s.d: 0.4948716593053935
+Clustering Coefficient: 0.04285714285714286
+
+Re
+La
+Fa
+So
+Mi
+Ti
+Do
+So:Re
+Do:Re
+Fa:La
+So:La
+Mi:Fa
+Fa:So
+Re:Mi
+So:Mi
+Do:Mi
+La:Ti
+Fa:Ti
+So:Ti
+So:Do
+
+content: Sew, a needle pulling thread
+user: So
+liked:
+Ti
+Mi
+Re
+Do
+La
+So
+
+Likes per person per post: 0.45714285714285713
+Follower Average: 1.8571428571428572
+Follower s.d: 0.8329931278350429
+Clustering Coefficient: 0.03207744636316064
+
+Re
+La
+Fa
+So
+Mi
+Ti
+Do
+So:Re
+Do:Re
+Fa:La
+So:La
+So:Fa
+Mi:Fa
+Fa:So
+Re:Mi
+So:Mi
+Do:Mi
+La:Ti
+Fa:Ti
+So:Ti
+So:Do
+
+content: Sew, a needle pulling thread
+user: So
+liked:
+Fa
+Ti
+Mi
+Re
+Do
+La
+So
+
+Likes per person per post: 0.4857142857142857
+Follower Average: 2.0
+Follower s.d: 0.7559289460184544
+Clustering Coefficient: 0.03316326530612245
+
+Re
+La
+Fa
+So
+Mi
+Ti
+Do
+La:Re
+So:Re
+Do:Re
+Fa:La
+So:La
+So:Fa
+Mi:Fa
+Fa:So
+Re:Mi
+So:Mi
+Do:Mi
+La:Ti
+Fa:Ti
+So:Ti
+So:Do
+
+content: La, a note to follow Sew
+user: La
+liked:
+La
+
+Likes per person per post: 0.42857142857142855
+Follower Average: 2.142857142857143
+Follower s.d: 0.8329931278350429
+Clustering Coefficient: 0.03068027210884354
+
+Re
+La
+Fa
+So
+Mi
+Ti
+Do
+La:Re
+So:Re
+Do:Re
+Fa:La
+So:La
+So:Fa
+Mi:Fa
+Fa:So
+Re:Mi
+So:Mi
+Do:Mi
+La:Ti
+Fa:Ti
+So:Ti
+So:Do
+
+content: La, a note to follow Sew
+user: La
+liked:
+Ti
+Re
+La
+
+Likes per person per post: 0.47619047619047616
+Follower Average: 2.142857142857143
+Follower s.d: 0.8329931278350429
+Clustering Coefficient: 0.03068027210884354
+
+Re
+La
+Fa
+So
+Mi
+Ti
+Do
+La:Re
+So:Re
+Do:Re
+Fa:La
+So:La
+So:Fa
+Mi:Fa
+Fa:So
+Re:Mi
+La:Mi
+So:Mi
+Do:Mi
+La:Ti
+Fa:Ti
+So:Ti
+So:Do
+
+content: La, a note to follow Sew
+user: La
+liked:
+Mi
+Ti
+Re
+La
+
+Likes per person per post: 0.5
+Follower Average: 2.2857142857142856
+Follower s.d: 1.0301575072754257
+Clustering Coefficient: 0.029400510204081635
+
+Re
+La
+Fa
+So
+Mi
+Ti
+Do
+La:Re
+So:Re
+Do:Re
+Fa:La
+So:La
+La:Fa
+So:Fa
+Mi:Fa
+Fa:So
+Re:Mi
+La:Mi
+So:Mi
+Do:Mi
+La:Ti
+Fa:Ti
+So:Ti
+So:Do
+
+content: La, a note to follow Sew
+user: La
+liked:
+Fa
+Mi
+Ti
+Re
+La
+
+Likes per person per post: 0.5238095238095238
+Follower Average: 2.4285714285714284
+Follower s.d: 1.049781318335648
+Clustering Coefficient: 0.02897158863545418
+
+Re
+La
+Fa
+So
+Mi
+Ti
+Do
+La:Re
+So:Re
+Do:Re
+Fa:La
+So:La
+La:Fa
+So:Fa
+Mi:Fa
+La:So
+Fa:So
+Re:Mi
+La:Mi
+So:Mi
+Do:Mi
+La:Ti
+Fa:Ti
+So:Ti
+So:Do
+
+content: La, a note to follow Sew
+user: La
+liked:
+So
+Fa
+Mi
+Ti
+Re
+La
+
+Likes per person per post: 0.5476190476190477
+Follower Average: 2.5714285714285716
+Follower s.d: 0.9035079029052513
+Clustering Coefficient: 0.030045351473922902
+
+Re
+La
+Fa
+So
+Mi
+Ti
+Do
+La:Re
+So:Re
+Do:Re
+Fa:La
+So:La
+La:Fa
+So:Fa
+Mi:Fa
+La:So
+Fa:So
+Re:Mi
+La:Mi
+So:Mi
+Do:Mi
+La:Ti
+Fa:Ti
+So:Ti
+La:Do
+So:Do
+
+content: La, a note to follow Sew
+user: La
+liked:
+Do
+So
+Fa
+Mi
+Ti
+Re
+La
+
+Likes per person per post: 0.5714285714285714
+Follower Average: 2.7142857142857144
+Follower s.d: 0.6998542122237652
+Clustering Coefficient: 0.02975295381310419
+
+Re
+La
+Fa
+So
+Mi
+Ti
+Do
+La:Re
+So:Re
+Do:Re
+Fa:La
+So:La
+La:Fa
+So:Fa
+Mi:Fa
+La:So
+Fa:So
+Re:Mi
+La:Mi
+So:Mi
+Ti:Mi
+Do:Mi
+La:Ti
+Fa:Ti
+So:Ti
+La:Do
+So:Do
+
+content: Tea, a drink with jam and bread
+user: Ti
+liked:
+Ti
+
+Likes per person per post: 0.5102040816326531
+Follower Average: 2.857142857142857
+Follower s.d: 0.989743318610787
+Clustering Coefficient: 0.028180272108843538
+
+Re
+La
+Fa
+So
+Mi
+Ti
+Do
+La:Re
+So:Re
+Do:Re
+Fa:La
+So:La
+La:Fa
+So:Fa
+Mi:Fa
+La:So
+Fa:So
+Re:Mi
+La:Mi
+So:Mi
+Ti:Mi
+Do:Mi
+La:Ti
+Fa:Ti
+So:Ti
+La:Do
+So:Do
+
+content: Tea, a drink with jam and bread
+user: Ti
+liked:
+Mi
+Ti
+
+Likes per person per post: 0.5306122448979592
+Follower Average: 2.857142857142857
+Follower s.d: 0.989743318610787
+Clustering Coefficient: 0.028180272108843538
+
+Re
+La
+Fa
+So
+Mi
+Ti
+Do
+La:Re
+So:Re
+Do:Re
+Fa:La
+So:La
+La:Fa
+So:Fa
+Mi:Fa
+Ti:Fa
+La:So
+Fa:So
+Re:Mi
+La:Mi
+So:Mi
+Ti:Mi
+Do:Mi
+La:Ti
+Fa:Ti
+So:Ti
+La:Do
+So:Do
+
+content: Tea, a drink with jam and bread
+user: Ti
+liked:
+Fa
+Mi
+Ti
+
+Likes per person per post: 0.5510204081632653
+Follower Average: 3.0
+Follower s.d: 1.0690449676496976
+Clustering Coefficient: 0.02755102040816327
+
+Re
+La
+Fa
+So
+Mi
+Ti
+Do
+La:Re
+So:Re
+Do:Re
+Fa:La
+So:La
+Ti:La
+La:Fa
+So:Fa
+Mi:Fa
+Ti:Fa
+La:So
+Fa:So
+Ti:So
+Re:Mi
+La:Mi
+So:Mi
+Ti:Mi
+Do:Mi
+La:Ti
+Fa:Ti
+So:Ti
+La:Do
+So:Do
+
+content: Tea, a drink with jam and bread
+user: Ti
+liked:
+So
+La
+Fa
+Mi
+Ti
+
+Likes per person per post: 0.5918367346938775
+Follower Average: 3.2857142857142856
+Follower s.d: 0.8806305718527109
+Clustering Coefficient: 0.02843833185448092
+
+Re
+La
+Fa
+So
+Mi
+Ti
+Do
+La:Re
+So:Re
+Ti:Re
+Do:Re
+Fa:La
+So:La
+Ti:La
+La:Fa
+So:Fa
+Mi:Fa
+Ti:Fa
+La:So
+Fa:So
+Ti:So
+Re:Mi
+La:Mi
+So:Mi
+Ti:Mi
+Do:Mi
+La:Ti
+Fa:Ti
+So:Ti
+La:Do
+So:Do
+Ti:Do
+
+content: Tea, a drink with jam and bread
+user: Ti
+liked:
+Do
+Re
+So
+La
+Fa
+Mi
+Ti
+
+Likes per person per post: 0.6326530612244898
+Follower Average: 3.5714285714285716
+Follower s.d: 0.7284313590846836
+Clustering Coefficient: 0.023863945578231294
+
+Re
+La
+Do2
+Fa
+So
+Mi
+Ti
+Do
+La:Re
+So:Re
+Ti:Re
+Do:Re
+Fa:La
+So:La
+Ti:La
+Ti:Do2
+La:Fa
+So:Fa
+Mi:Fa
+Ti:Fa
+La:So
+Fa:So
+Ti:So
+Re:Mi
+La:Mi
+So:Mi
+Ti:Mi
+Do:Mi
+La:Ti
+Fa:Ti
+So:Ti
+La:Do
+So:Do
+Ti:Do
+
+content: That will bring us back to Do (oh-oh-oh)
+user: Do2
+liked:
+Do2
+
+Likes per person per post: 0.5
+Follower Average: 3.25
+Follower s.d: 1.0897247358851685
+Clustering Coefficient: 0.01979166666666667
+
