@@ -319,7 +319,10 @@ class UnitTestDSAHashTable(unittest.TestCase):
     def testReadExport(self):
         # First, test that read works
         # Then, test that export works
-        with open("RandomNames7000.csv", "r") as f:
+        import os
+        dirname = os.path.dirname(__file__)
+        filename = os.path.join(dirname, 'RandomNames7000.csv')
+        with open(filename, "r") as f:
             for x in f:
                 names = {}
                 key, value = x.rstrip('\n').split(',')

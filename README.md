@@ -35,4 +35,6 @@ Example data provided by the unit coordinator can be found in the example direct
 
 To run unit tests, change into the src directory and run the command:
 
-```python3 UnitTestSocialNetwork.py```
+```python3 -m unittest discover . -p '*'```
+
+This automatically executes all unittests in the program.

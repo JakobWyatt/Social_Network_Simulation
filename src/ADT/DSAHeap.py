@@ -188,7 +188,10 @@ class UnitTestDSAHeap(unittest.TestCase):
         self.assertEqual(heap.remove(), (-51, "neg51"))
 
     def testHeapSort(self):
-        with open("RandomNames7000.csv", "r") as f:
+        import os
+        dirname = os.path.dirname(__file__)
+        filename = os.path.join(dirname, 'RandomNames7000.csv')
+        with open(filename, "r") as f:
             student = [x.rstrip("\n").split(",") for x in f]
             for x1, x2 in zip(sorted(student), DSAHeap.heapSort(student)):
                 self.assertEqual(x1[0], x2[0])

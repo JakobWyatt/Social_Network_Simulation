@@ -292,7 +292,10 @@ class UnitTestDSADirectedGraph(unittest.TestCase):
         self.assertEqual(graph.getEdgeCount(), 3)
 
     def testReadGraphFile(self):
-        readGraph = DSADirectedGraph.readGraphFile("prac6_1.al")
+        import os
+        dirname = os.path.dirname(__file__)
+        filename = os.path.join(dirname, 'prac6_1.al')
+        readGraph = DSADirectedGraph.readGraphFile(filename)
         graph = DSADirectedGraph()
         graph.addVertex("A", None)
         graph.addVertex("B", None)
