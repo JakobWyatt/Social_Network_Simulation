@@ -18,7 +18,7 @@ class SocialNetworkSimRunner:
     @staticmethod
     def SimulationInterface(netfile, eventfile, prob_like, prob_foll):
         try:
-            fileName, _ = Simulation(netfile, eventfile, prob_like, prob_foll)
+            fileName, _ = SocialNetworkSimRunner.Simulation(netfile, eventfile, prob_like, prob_foll)
             print(f"Simulation logged to {fileName}")
         except ValueError as ex:
             print(str(ex))
@@ -32,7 +32,7 @@ class SocialNetworkSimRunner:
         from tempfile import NamedTemporaryFile
         with NamedTemporaryFile(delete=False, mode='w') as f:
             filename = f.name
-            fileData, stats = ExecEventFile(network, events)
+            fileData, stats = SocialNetworkSimRunner.ExecEventFile(network, events)
             f.write(fileData)
         return filename, stats
 
@@ -168,13 +168,13 @@ class SocialNetworkSimRunner:
         space has many dimensions (curse of dimensionality), causing a large amount of data 
         to be produced at a very high runtime.
         """
-        like_prob = [0.2, 0.4, 0.6, 0.8, 1]
-        foll_prob = [0.2, 0.4, 0.6, 0.8, 1]
-        size = [5, 10, 20, 50]
-        follower_average_mult_sz = [0.1, 0.5, 1]
-        follower_sd_mult_av = [0, 0.5, 1]
-        clickbait_sd = [0]
-        posts = 10
+        like_prob = [0.5]
+        foll_prob = [0.5]
+        size = [50]
+        follower_average_mult_sz = [0.2]
+        follower_sd_mult_av = [0.5]
+        clickbait_sd = [0, 1, 3]
+        posts = 50
         outputCsv = ""
         for lp in like_prob:
             for fp in foll_prob:
@@ -182,10 +182,10 @@ class SocialNetworkSimRunner:
                     for favg in follower_average_mult_sz:
                         for fsd in follower_sd_mult_av:
                             for csd in clickbait_sd:
-                                files = GenerateSocialNetworkAndPost(size=sz, follower_av=favg * sz, follower_sd=fsd * favg * sz,
+                                files = SocialNetworkSimRunner.GenerateSocialNetworkAndPost(size=sz, follower_av=favg * sz, follower_sd=fsd * favg * sz,
                                                                      clustering_func=lambda x: 0, post_num=posts, clickbait_sd=csd)
                                 with open(files[0], 'r') as net, open(files[1], 'r') as event:
-                                    _, stats = simulation(net, event, lp, fp)
+                                    _, stats = SocialNetworkSimRunner.Simulation(net, event, lp, fp)
                                 stream(f"\n\nlike_prob:{lp},follow_prob:{fp},size:{sz},follower_average_mult_sz:{favg},follower_sd_mult_av:{fsd},clickbait_sd:{csd}\n")
                                 stream("post,likes,clustering,favg,fsd\n")
                                 stream("\n".join([f"{x.post},{x.likes},{x.clustering},{x.favg},{x.fsd}" for x in stats]))
