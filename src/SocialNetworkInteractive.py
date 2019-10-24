@@ -164,7 +164,7 @@ class interactive(cmd.Cmd):
     def do_save(self, arg):
         'Save the network: save <filename>'
         try:
-            with open(arg, "f") as f:
+            with open(arg, 'w') as f:
                 f.write(self._network.save())
         except IOError as ioex:
             print(f"File could not be read: {os.strerror(ioex.errno)}")

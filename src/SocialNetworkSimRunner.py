@@ -48,8 +48,8 @@ class SocialNetworkSimRunner:
     def ExecEventFile(network, events) -> DSALinkedList:
         outcome = ""
         from collections import namedtuple
-        SimStats = namedtuple('SimStats', ('post likes clustering'
-                                           'favg fsd simstate'))
+        SimStats = namedtuple('SimStats', ('post simstate likes clustering '
+                                           'favg fsd'))
         state = DSALinkedList()
         post = 0
         for x in events:
@@ -68,10 +68,11 @@ class SocialNetworkSimRunner:
                 else:
                     network.addPost(tokens[1], tokens[2], float(tokens[3]))
                 while not network.done():
-                    state.insertLast(SimStats(post, network.likesScaled(),
+                    state.insertLast(SimStats(post,
+                                              network.simstate(),
+                                              network.likesScaled(),
                                               network.clusteringCoefficient(),
-                                              *network.followsAvSd(),
-                                              network.simstate()))
+                                              *network.followsAvSd()))
                     network.update()
                 post += 1
             else:
