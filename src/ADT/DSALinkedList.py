@@ -21,7 +21,8 @@ class DSAListNode:
 class DSALinkedList:
     """
     This class implements a doubly linked, doubly ended, linked list
-    with cached count.
+    with cached count. This linked list also supports list concatenation
+    in O(1) time.
     """
 
     def __init__(self):

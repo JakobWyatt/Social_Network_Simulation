@@ -3,6 +3,8 @@
 \usepackage{microtype}
 \usepackage{hyperref}
 \usepackage{pdfpages}
+\usepackage{float}
+\usepackage{graphicx}
 
 \title{COMP1002 Assignment\\Documentation}
 \author{Jakob Wyatt\\19477143}
@@ -13,10 +15,15 @@
 \section{Overview}
 \label{sec:Overview}
 This program is designed to simulate a social network.
+The entry point of the program can be found in \texttt{src/SocialNetworkSim.py}.
 The user interface is as specified in the assignment brief,
 with additional functionality including graphical representation
-of the socical network in interactive mode, and interactive liking/unliking 
-of posts.\\
+of the socical network in interactive mode (\texttt{display}), and interactive liking/unliking 
+of posts. An example of this graphical representation is shown below.\\
+\begin{figure}[H]
+\centering
+\includegraphics[width=.7\linewidth]{display}
+\end{figure}
 There exists only one post at a time, with a new post being loaded when the current
 post has not had any activity in the last timestep. The original poster always
 likes their own post. A user can only like a post once.\\
@@ -35,7 +42,7 @@ The update algorithm works as follows:
             $\mathit{clamp}(\mathit{prob\_like} \times \mathit{clickbait\_factor}, 0, 1)$.
     \item If a user likes a post in the current timestep, they have a chance of following the
             original poster. This is sampled using the same technique as above, with global probability
-            $\mathit{prob\_foll}$.g
+            $\mathit{prob\_foll}$.
 \end{enumerate}
 Note that in the above algorithm, if a user does not like a post, they may potentially
 be exposed to it later via a different friend. This behaviour is intentional, as it incentivises
@@ -46,6 +53,10 @@ ADTs/Data Structures for implementation. However, within individual methods,
 some python data types such as List have been used, to help enhance code clarity
 when performing some operations. This minor use of python data structures
 has been approved by Ben, my DSA Tutor.
+
+For command line argument parsing and an interpreter-style user interface
+in interactive mode, the python modules \texttt{argparse} and \texttt{cmd}
+were used. This has also been approved by Ben.
 
 \section{UML}
 \includepdf{UML.pdf}
@@ -58,28 +69,26 @@ as they are all similar. Each unit test class inherits from python's \texttt{uni
 and have been created to test class X, where the name of the test class is
 \texttt{UnitTestX}.
 
-\textbf{SocialNetworkCore.SocialNetwork}
+\subsection{SocialNetworkCore.SocialNetwork}
 This class contains an interface for creating and updating a social network,
 and contains common functionality used in both interactive and simulation mode.
 By doing this, the underlying data structures used to store the network
 can be changed without needing to also change the user interface code.
-Data structures used in this class are explained in the justification section
-of this documentation.
+Data structures used in this class are explained in \autoref{sec:Justification}.
 
-\textbf{SocialNetworkInteractive.interactive}
+\subsection{SocialNetworkInteractive.interactive}
 This class inherits from the python \texttt{cmd.Cmd} class
 to implement an interactive interpreter-like interface for the program.
 It uses the \texttt{SocialNetworkCore.SocialNetwork} class for storage and manipulation of the social network.
-Using this module to create the user interface was approved by Ben, my DSA tutor.
 
-\textbf{SocialNetworkPost.SocialNetworkPost}
+\subsection{SocialNetworkPost.SocialNetworkPost}
 This class represents a post on the social network,
 and can be queried to obtain the users that have liked the post, the original poster,
 and the post content. It also contains a method \texttt{update()},
 which propogates the post through the network by one timestep.
 The core of the propogation algorithm is implemented in this method.
 
-\textbf{SocialNetworkUser.SocialNetworkUser}
+\subsection{SocialNetworkUser.SocialNetworkUser}
 This class is a wrapper around a DSADirectedGraphVertex that has been created
 by the SocialNetwork class. As such, it does not store any data internally,
 and performs most functionality by calling corresponding functions within the DSADirectedGraphVertex class.
@@ -93,46 +102,58 @@ the SocialNetwork class, which creates an external interface for user specific
 functionality. This means that the underlying implementation of a user may be
 changed without breaking any code that uses the SocialNetworkUser class.
 
-\textbf{ADT.DSADirectedGraph.DSADirectedGraph}
+\subsection{ADT.DSADirectedGraph.DSADirectedGraph}
 This class is an ADT of a directed graph, and contains functionality to add/remove verticies and edges from the graph.
 The class uses terms from graph theory such as "successor" and "predecessor"
 so that it can remain use agnostic, and can be carried over to other projects
 that may require a graph implementation.
 It is currently implemented using the \texttt{DSAHashTable} data structure,
 however it has been implemented using a \texttt{DSALinkedList} in the past.
+Reasons for this data structure choice have been explained in the \autoref{sec:Justification} section.
 
-\textbf{ADT.DSADirectedGraph.DSADirectedGraphVertex}
+\subsection{ADT.DSADirectedGraph.DSADirectedGraphVertex}
 This class contains information about a vertex, including its label, data, and edges.
 This is a container class intended for use within the DSADirectedGraph class.
 
-\textbf{ADT.DSAHashTable.DSAHashTable}
+\subsection{ADT.DSAHashTable.DSAHashTable}
 This class is an impementation of an automatically resizing hash table,
-with O(1) amortized insert, delete, and find operations.
+with $O(1)$ amortized insert, delete, and find operations.
 
-\textbf{ADT.DSAHashTable.DSAHashEntry}
+\subsection{ADT.DSAHashTable.DSAHashEntry}
 This class represents an entry in a \texttt{DSAHashTable},
 and contains setters and getters for entry keys, values, and state.
 
-\textbf{ADT.DSAHeap}
+\subsection{ADT.DSAHeap}
 This class implements a max-heap using an array.
 This gives $O\left(n\log n\right)$ sort and $O\left(\log n\right)$ insert/remove.
 Resizing occurs automatically when the heap is too large.
 
-\textbf{ADT.DSAHeapEntry}
+\subsection{ADT.DSAHeapEntry}
 This class is a convenience class for use within the \texttt{DSAHeap} class,
 and represents a single entry in the heap.
 
+\subsection{ADT.DSALinkedList}
+This class implements a doubly linked, doubly ended, linked list
+with cached length. This linked list also supports list concatenation
+in $O(1)$ time.
+
+\subsection{ADT.DSAListNode}
+This class is used to represent an entry inside the DSALinkedList class.
+
 \section{Justification}
+\label{sec:Justification}
 In any program, whenever an ADT or algorithm is selected for use, this use must be justified.
 Choice of an ADT must help enhance clarity, make implementation of an algorithm easier,
 and have good time and space complexity.\\
 
+\subsection{Data Structure Selection}
+
 The user network uses the \texttt{DSADirectedGraph} class to represent follows between users
-as edges. This helps to enhance clarity, as follows are inherently directional in nature.\\
+as edges. This helps to enhance clarity, as follows between users are inherently directional in nature.\\
 
 Operations that must be performed within this directed graph are find/add/remove verticies,
 and find/add/remove edges. It should also be noted that within the context of a social network,
-there only exists a maximum of one directed edge between any 2 nodes. Duplicate nodes also will not
+there exists a maximum of one directed edge between any 2 nodes. Duplicate nodes also will not
 exist.
 To store verticies and edges within this directed graph, the \texttt{DSALinkedList} class was originally
 used to store this data. However, this ended up being rather inefficient, with a time complexity of
@@ -143,7 +164,7 @@ equal to vertex find and edge find, as it had to be checked that the vertex/edge
 To improve the performance of these operations, a DSAHashTable was used to store the verticies and edges instead.
 This gives $O\left(1\right)$
 performance for find, insert, and remove operations. Despite the greater overhead, in practice it was found to outperform
-the linked list implementation at a graph size of 20, approximately doubling the speed when the number of verticies was 50.\\
+the linked list implementation at a graph size of 20, and approximately doubled the speed when the number of verticies was 50.\\
 
 Multiple \texttt{SocialNetworkPost} objects need to be stored within the \texttt{SocialNetwork} class.
 The only time all posts need to be accessed
@@ -151,29 +172,35 @@ is when the class is queried for popular posts, which requires ordering the post
 A simple sorting approach will have a time complexity of $O\left(n\log n\right)$. However, this
 approach requires resorting all posts every time the function is called.\\
 
-Storing the posts in a \texttt{DSAHeap} instead maintains
-the time complexity of $O\left(n\log n\right)$. However, if \texttt{popularPosts}
-is called multiple times, the DSAHeap is already in a sorted state, greatly reducing the runtime.
+Storing the posts in a \texttt{DSAHeap} still maintains
+the time complexity of $O\left(n\log n\right)$ when sorting. However, if \texttt{popularPosts}
+is called multiple times, the DSAHeap is already in a sorted state, which greatly reduces the execution time.
 A class field is used to cache the most recent post.\\
 
 As well as being stored in the \texttt{DSADirectedGraph}, users are also stored in a \texttt{DSAHeap},
 sorted by follower count. This is done to increase the efficiency of the popular users operation,
-and gives the same performance gains listed in the previous paragraph.
+as the users are always stored in a semi-sorted state.
 One disadvantage of this strategy is that it increases the memory footprint. However, it only increases it
 by a linear factor, and does not change the space complexity of the program.\\
 
 Another performance optimization is that user posts are cached in a dedicated linked list per user.
-This speeds up the 'list users posts' operation, as it avoids needing to search through every post. On networks with large amounts
-of posts, this gives a significant performance increase.\\
+When finding all of a users posts, this gives a significant performance increase,
+as only a small subset of the total posts need to be iterated over.\\
 
-An alternative algorithm to the one described in \autoref{sec:Overview} is to use a breadth first search through the graph instead,
-iterating over all the nodes in the network exactly once. The reason why this was eventually decided against was because
+\subsection{Alternative Timestep Algorithms}
+
+An alternative post propoagtion algorithm to the one described in \autoref{sec:Overview}
+is to use a breadth first search through the graph instead,
+iterating over all the nodes in the network exactly once. The reason why this was decided against was because
 the desired behaviour was to expose a user to a post more often if more of their friends interacted with the post.
 This emulates behaviour on social media
 platforms such as facebook, where a user may see an old post if a friend has recently liked it.\\
 
+\subsection{Clustering Coefficient}
+
 Some other interesting algorithms that were implemented in this program is the calculation of the globally averaged local clustering coefficient, found in the
 function \texttt{SocialNetwork.ClusteringCoefficient}.
+This allows analysis of of how well connected a group of users is.
 To calculate the clustering coefficient of a vertex $V$, the neighbourhood of that
 vertex is first found.\\
 $N = V_{successors} \bigcup V_{predecessors}$\\
@@ -191,6 +218,8 @@ This algorithm has $O\left(n^3\right)$ execution time when hashtables are used t
 edges and verticies, as is done in this program. When a linked list is used instead, this execution time jumps to
 $O\left(n^4\right)$.\\
 
+\subsection{Network Generation}
+
 To generate the simulated networks, a unique algorithm was used
 that was created by the author, and to their knowledge, does not exist anywhere else.
 This algorithm allows efficient generation of structured (non-random) networks,
@@ -200,36 +229,41 @@ First, a number of verticies are created.
 Next, these verticies are iterated over, and the number of successors of each
 vertex is calculated by sampling from a distribution $X \sim N\left(follower\_av, follwer\_sd^2\right)$.
 
-To select the edges of the network, an approach similar in nature to a variogram
-(https://en.wikipedia.org/wiki/Variogram) was used (taken from the field of geostatistics).
-A variogram measures the amount of correlation between two points that are some distance apart.
+To select the edges of the network, an approach was used that is similar in concept
+to a variogram, used in the field of geostatistics.
+A variogram measures the amount of correlation between two points in a field that are some distance apart.
 In this algorithm, this distance is discrete rather than continuous, and is measured by finding
-some path between two nodes. By increasing the spacial correlation at short distances,
-a graph can be created with a higher clustering coefficient. Reducing the spacial correlation
-to 0 causes the graph to become random.
+a path between two nodes. By increasing the correlation between nodes at short distances,
+a graph can be created with a higher clustering coefficient. Alternatively,
+decreasing the correlation between nodes causes the graph to become more randomised,
+and less clustered.
 
-A property of a graph that is analogous to the variogram is the clustering
-coefficient, which determines the correlation between verticies at a distance of 1.
-This clustering coefficient can be generalized to include all verticies
-within some distance $h$ of a central vertex (Xiao et al. 2007).
-It is expected that this clustering coefficient will decrease as the distance increases
-in a real life network. An example of this is that your friends are likely to be friends of
-eachother, but your friends of friends are less likely to be friends of eachother.
-By assuming the correlation between verticies, realistic social networks can be generated
-for testing.
+The clustering coefficient of a vertex can be generalized to include all verticies
+within some distance $h$ of a central vertex (Xiao et al. 2007), rather than
+only verticies within a distance of 1 of the central vertex.
+
+In a social network, it is reasonable to assume that the clustering
+coefficient will decrease as the distance increases.
+One way to visualise this is that your friends are likely to be interconnected,
+whereas your friends of friends are less likely to be interconnected directly.
+By creating graphs that follow this property, realistic social networks
+can be created for use in simulations.
 
 To generate an edge in the graph, a random walk is performed starting at a given vertex, $V_0$.
 This random walk occurs along any nodes that are predecessors of the current node,
 and does not loop back onto previously visited nodes.
-At each step on the random walk, the probability of creating an edge with $V_0$
-is calculated by evaluating the variogram using the distance from the original node
-(length of the random walk).
-If an edge is created, the process
-starts again and repeats until all necessary edges have been created.
-If there are no available verticies to walk to,
+At each step on the random walk, the probability of creating an edge between the current node and $V_0$
+is calculated by evaluating the variogram $\gamma (h)$, where h is the distance that has been travelled on the random walk.
+
+If an edge is created, a new random walk begins starting at the vertex $V_0$,
+and this algorithm repeats until the correct number of edges have been created
+for this vertex.
+If there are no valid verticies to walk to,
 or the random walk has reached some distance threshold from the original node,
 an edge is created with any random vertex in the graph. This allows initial
 'bootstrapping' of the network when no edges have yet been created.\\
+
+\subsection{Gridsearch}
 
 To profile multiple runs of the simulation a gridsearch algorithm was used
 to vary the below parameters:
@@ -242,17 +276,15 @@ to vary the below parameters:
 First, arrays that contain the parameter values to be tested were created.
 Next, for all possible combinations of these parameters, a network
 matching these parameters was created. A simulation was then run on all networks,
-with simulation statistics being logged to a file as CSV data.
+with simulation statistics being logged to a file in CSV format.
 
-Parameters that are varied in this function are the like and follow probabilities,
-network size, clickbait standard deviation, post/timestep number, and
-follower average (density) / follower standard deviation (relative popularity).
+Parameters that are varied during the gridsearch include the like and follow probabilities,
+network size, clickbait standard deviation, and
+follower average / follower standard deviation.
 
-An advantage of this algorithm is that it is very easy to implement compared to
-other search space algorithms, such as gradient descent and evolution.
-However, a disadvantage is that it searches a very large volume when the parameter
-space has many dimensions (curse of dimensionality), causing a large amount of
-time to generate the data. The algorithmic complexity of the gridsearch algorithm
+An advantage of this algorithm is that it is very simple to implement.
+However, a disadvantage is that it takes a long time to execute when there are many input parameters.
+The algorithmic complexity of the gridsearch algorithm
 is $O(x^n)$, where n is the number of parameters that are varied and x is the number
 of datapoints per parameter.
 
