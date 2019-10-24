@@ -23,7 +23,7 @@ class DSAHeapEntry:
     @property
     def priority(self) -> object:
         return self._priority
-        
+
     @priority.setter
     def priority(self, p: object):
         self._priority = p
@@ -31,7 +31,7 @@ class DSAHeapEntry:
     @property
     def value(self) -> object:
         return self._value
-        
+
     @value.setter
     def value(self, p: object):
         self._value = p
@@ -53,7 +53,8 @@ class DSAHeap:
 
     def add(self, priority: object, value: object):
         if len(self) == len(self._heap):
-            newHeap = np.zeros(int(len(self._heap) * self._resizeFactor), dtype=object)
+            newHeap = np.zeros(int(len(self._heap) * self._resizeFactor),
+                               dtype=object)
             for i, x in enumerate(self._heap):
                 newHeap[i] = x
             for i in range(len(self._heap), len(newHeap)):
@@ -71,7 +72,8 @@ class DSAHeap:
         value = self._heap[0].value
         self._count -= 1
         # Swap to conserve consistency of objects
-        self._heap[0], self._heap[len(self)] = self._heap[len(self)], self._heap[0]
+        self._heap[0], self._heap[len(self)] = (self._heap[len(self)],
+                                                self._heap[0])
         self._trickleDown(0)
         return priority, value
 
@@ -88,7 +90,8 @@ class DSAHeap:
             raise ValueError("Element was not found.")
         # Next, swap it with the rightmost element.
         self._count -= 1
-        self._heap[i], self._heap[len(self)] = self._heap[len(self)], self._heap[i]
+        self._heap[i], self._heap[len(self)] = (self._heap[len(self)],
+                                                self._heap[i])
         # Finally, trickle down this element
         self._trickleDown(i)
 
@@ -113,7 +116,7 @@ class DSAHeap:
         self._count = size
 
     @staticmethod
-    def heapSort(values: List[Tuple[object, object]]) -> List[Tuple[object, object]]:
+    def heapSort(values: List[Tuple[object, object]]):
         heap = DSAHeap(len(values))
         for i in range(len(values)):
             heap._heap[i].priority = values[i][0]
@@ -124,8 +127,10 @@ class DSAHeap:
 
     def _trickleUp(self, index: int):
         parent = int((index - 1) / 2)
-        if index > 0 and self._heap[parent].priority < self._heap[index].priority:
-            self._heap[parent], self._heap[index] = self._heap[index], self._heap[parent]
+        if (index > 0
+           and self._heap[parent].priority < self._heap[index].priority):
+            self._heap[parent], self._heap[index] = (self._heap[index],
+                                                     self._heap[parent])
             self._trickleUp(parent)
 
     def _trickleDown(self, index: int):
@@ -135,11 +140,14 @@ class DSAHeap:
         swap = 0
         if left < len(self):
             swap = left
-        if right < len(self) and self._heap[right].priority > self._heap[left].priority:
+        if (right < len(self)
+           and self._heap[right].priority > self._heap[left].priority):
             swap = right
         # Perform the swap
-        if swap != 0 and self._heap[swap].priority > self._heap[index].priority:
-            self._heap[swap], self._heap[index] = self._heap[index], self._heap[swap]
+        if (swap != 0
+           and self._heap[swap].priority > self._heap[index].priority):
+            self._heap[swap], self._heap[index] = (self._heap[index],
+                                                   self._heap[swap])
             self._trickleDown(swap)
 
     def __len__(self):
@@ -246,6 +254,7 @@ class UnitTestDSAHeap(unittest.TestCase):
         self.assertEqual(heap.remove(), (5, "five"))
         self.assertEqual(heap.remove(), (1, "one"))
         self.assertEqual(heap.remove(), (0, "zero"))
+
 
 if __name__ == "__main__":
     unittest.main()

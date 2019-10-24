@@ -1,19 +1,21 @@
 from typing import List
 
-from SocialNetworkUser import SocialNetworkUser
-from SocialNetworkPost import SocialNetworkPost
-
 from ADT.DSADirectedGraph import *
 from ADT.DSAHeap import *
 from ADT.DSAHashTable import *
 from ADT.DSALinkedList import *
 
+from SocialNetworkUser import SocialNetworkUser
+from SocialNetworkPost import SocialNetworkPost
+
+
 class SocialNetwork:
     """
-    This class contains an interface for creating and updating a social network,
-    and contains common functionality used in both interactive and simulation mode.
-    By doing this, the underlying data structures used to store the network
-    can be changed without needing to also change the user interface code. 
+    This class contains an interface for creating and updating a social
+    network, and contains common functionality used in both interactive and
+    simulation mode. By doing this, the underlying data structures used to
+    store the network an be changed without needing to also change the user
+    interface code.
     """
 
     # Error messages
@@ -29,7 +31,7 @@ class SocialNetwork:
         self._network = DSADirectedGraph()
         self._mostFollowed = DSAHeap()
         self._currentPost = None
-        #Post likes
+        # Post likes
         self._posts = DSAHeap()
 
     @property
@@ -153,7 +155,10 @@ class SocialNetwork:
     def addPost(self, userName: str, content: str, clickbaitFactor: float = 1):
         try:
             user = self.findUser(userName)
-            self._currentPost = SocialNetworkPost(user, content, clickbaitFactor, self.probLike, self.probFollow)
+            self._currentPost = SocialNetworkPost(user, content,
+                                                  clickbaitFactor,
+                                                  self.probLike,
+                                                  self.probFollow)
             self._posts.add(self._currentPost, None)
             user.addPost(self._currentPost)
         except ValueError as e:
@@ -172,7 +177,7 @@ class SocialNetwork:
             Network representation, most recent post representation,
             and optional statistics.
         """
-        return f"{self.save()}\n{self._currentPost.save()}\n"#{self.optionalStats()}\n"
+        return f"{self.save()}\n{self._currentPost.save()}\n"
 
     def optionalStats(self) -> str:
         """Outputs optional statistics about the network.
@@ -186,8 +191,10 @@ class SocialNetwork:
         # Likes per person per post
         averageLikes = 0
         if len(self._posts) * self._network.getVertexCount() != 0:
-            totalLikes = sum([sum(1 for _ in x.priority.liked()) for x in self._posts])
-            averageLikes = totalLikes / (len(self._posts) * self._network.getVertexCount())
+            totalLikes = sum([sum(1 for _ in x.priority.liked())
+                             for x in self._posts])
+            averageLikes = totalLikes / (len(self._posts) *
+                                         self._network.getVertexCount())
         return averageLikes
 
     def followsAvSd(self) -> (float, float):
@@ -202,28 +209,30 @@ class SocialNetwork:
 
     def clusteringCoefficient(self) -> float:
         """
-        Calculates the globally averaged/scaled local clustering coefficient of a graph.
-        This algorithm can be found here: https://en.wikipedia.org/wiki/Clustering_coefficient
+        Calculates the globally averaged/scaled local clustering coefficient
+        of a graph. This algorithm can be found here:
+        https://en.wikipedia.org/wiki/Clustering_coefficient
 
         The top level description of this algorithm is that for each node,
         a 'local clustering coeffient' is calculated. The number returned
         from this function is the average of all local clustering coefficients
         of the network, divided by the number of follows in the network.
-        This is done to avoid the influence increasing followers has on the clustering
-        coefficient.
+        This is done to avoid the influence increasing followers has on the
+        clustering coefficient.
 
-        To calculate the clustering coeffient of a user, the neighbourhood of the 
-        user is first found. This is defined as the union of the people that are followed by,
-        and following, the user.
-        Next, for every connection of every user in the neighbourhood, the number
-        of connections that lie within that neighbourhood are counted.
-        Finally, the number of connections within the neighbourhood are divided
-        by the total number of potential connections within the neighbourhood,
-        (neighbourhood_size * (neighbourhood_size - 1)).
+        To calculate the clustering coeffient of a user, the neighbourhood of
+        the user is first found. This is defined as the union of the people
+        that are followed by, and following, the user.
+        Next, for every connection of every user in the neighbourhood,
+        the number of connections that lie within that
+        neighbourhood are counted.
+        Finally, the number of connections within the neighbourhood are
+        divided by the total number of potential connections within the
+        neighbourhood, (neighbourhood_size * (neighbourhood_size - 1)).
 
-        This algorithm has O(n^3) execution time when hashtables are used to store
-        edges and verticies. When a linked list is used instead, this execution time jumps to
-        O(n^4).
+        This algorithm has O(n^3) execution time when hashtables are used to
+        store edges and verticies. When a linked list is used instead, this
+        execution time jumps to O(n^4).
         """
         sumLocalClustering = 0
         for k, v in self._network:
@@ -235,17 +244,22 @@ class SocialNetwork:
             for preK, preV in v.predecessor:
                 if not neighbourhood.hasKey(preK):
                     neighbourhood.put(preK, preV)
-            # Next, find the number of connections between nodes in the neighbourhood
+            # Next, find the number of connections between
+            # nodes in the neighbourhood
             connectionCount = 0
             for nK, nV in neighbourhood:
                 for succK, succV in nV.successor:
                     if neighbourhood.hasKey(succK):
                         connectionCount += 1
             if len(neighbourhood) != 0 and len(neighbourhood) != 1:
-                sumLocalClustering += connectionCount / ((len(neighbourhood) - 1) * len(neighbourhood))
+                sumLocalClustering += (connectionCount /
+                                       ((len(neighbourhood) - 1)
+                                        * len(neighbourhood)))
         globalCoef = 0
-        if self._network.getVertexCount() != 0 and self._network.getEdgeCount() != 0:
-            globalCoef = sumLocalClustering / (self._network.getVertexCount() * self._network.getEdgeCount())
+        if (self._network.getVertexCount() != 0
+           and self._network.getEdgeCount() != 0):
+            globalCoef = sumLocalClustering / (self._network.getVertexCount()
+                                               * self._network.getEdgeCount())
         return globalCoef
 
     def popularPosts(self) -> List['SocialNetworkPost']:

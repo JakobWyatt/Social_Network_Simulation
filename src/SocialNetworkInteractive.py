@@ -39,7 +39,9 @@ class interactive(cmd.Cmd):
             print(str(vEx))
 
     def do_find_user(self, arg):
-        'Find a user and display their posts, followers, and following: find_user <name>'
+        """Find a user and display their posts, followers, and following:
+        find_user <name>
+        """
         try:
             user = self._network.findUser(arg)
             print("#posts")
@@ -53,7 +55,7 @@ class interactive(cmd.Cmd):
             [print(x.name()) for x in user.following()]
         except ValueError as ex:
             print(str(ex))
-        
+
     def do_add_user(self, arg):
         'Add a user: add_user <name>'
         try:
@@ -106,7 +108,9 @@ class interactive(cmd.Cmd):
             print("Invalid usage.")
 
     def do_prob(self, arg):
-        'Set the probabilities of the social network: prob <prob_like> <prob_foll>'
+        """Set the probabilities of the social network:
+        prob <prob_like> <prob_foll>
+        """
         args = arg.split()
         if len(args) == 2:
             try:
@@ -140,11 +144,15 @@ class interactive(cmd.Cmd):
 
     def do_posts(self, arg):
         'Display posts in order of popularity: posts'
-        [print(f"user: {x.user().name()}\ncontent: {x.content}\nlikes: {sum(1 for _ in x.liked())}\n") for x in self._network.popularPosts()]
+        [print(f"user: {x.user().name()}\n"
+               f"content: {x.content}\n"
+               f"likes: {sum(1 for _ in x.liked())}\n"
+               ) for x in self._network.popularPosts()]
 
     def do_users(self, arg):
         'Display users in order of popularity: users'
-        [print(f"user: {x.name()}\nfollowers: {len(x.followers())}\n") for x in self._network.popularUsers()]
+        [print(f"user: {x.name()}\nfollowers: {len(x.followers())}\n")
+         for x in self._network.popularUsers()]
 
     def do_update(self, arg):
         'Run a timestep: update'

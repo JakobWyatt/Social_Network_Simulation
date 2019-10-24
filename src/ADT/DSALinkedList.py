@@ -8,6 +8,7 @@ import typing
 import unittest
 import pickle
 
+
 class DSAListNode:
     """
     This class is used to represent an entry inside the DSALinkedList class.
@@ -17,6 +18,7 @@ class DSAListNode:
         self._data = data
         self._prev = prev
         self._next = next
+
 
 class DSALinkedList:
     """
@@ -48,7 +50,7 @@ class DSALinkedList:
             else:
                 node._prev._next = node
         self._count += 1
-        
+
     def _remove(self, item: 'DSAListNode') -> object:
         if item is not None:
             if item is self._head:
@@ -63,7 +65,7 @@ class DSALinkedList:
             self._count -= 1
             item = item._data
         return item
-        
+
     def _find(self, item: object) -> 'DSAListNode':
         node = self._head
         while node is not None and item != node._data:
@@ -81,7 +83,7 @@ class DSALinkedList:
         def reverse_gen(iter):
             while iter is not None:
                 yield iter._data
-                iter = iter._prev        
+                iter = iter._prev
         return reverse_gen(self._tail)
 
     def isEmpty(self) -> bool:
@@ -89,13 +91,13 @@ class DSALinkedList:
 
     def insertFirst(self, item: object):
         self._insert(item, self._head)
-    
+
     def insertLast(self, item: object):
         self._insert(item, None)
-    
+
     def insertBefore(self, item: object, before: object):
         self._insert(item, self._find(before))
-    
+
     def peekFirst(self) -> object:
         return self._head._data
 
@@ -151,7 +153,7 @@ class UnitTestDSALinkedList(unittest.TestCase):
         data = ["a", "b", "c", "d"]
         for x in data:
             ll.insertFirst(x)
-        
+
         i = 0
         for x in reversed(ll):
             self.assertEqual(data[i], x)

@@ -1,22 +1,24 @@
 """
 Referencing: The original code used to implement this class was submitted
-in prac 5, in the file DSAGraph.py. Major changes have been made to the underlying
-data structure, interface, and class responsibility.
+in prac 5, in the file DSAGraph.py. Major changes have been made to the
+underlying data structure, interface, and class responsibility.
 """
 
 import unittest
 import typing
+
 import numpy as np
 
 from ADT.DSAHashTable import DSAHashTable
+
 
 class DSADirectedGraphVertex:
     """
     This class contains information about a vertex, including its
     label, data, and edges.
-    The class uses terms from graph theory such as "successor" and "predecessor"
-    so that it can remain use agnostic, and can be carried over to other projects
-    that may require a graph implementation.
+    The class uses terms from graph theory such as "successor" and'
+    "predecessor" so that it can remain use agnostic, and can be carried over
+    to other projects that may require a graph implementation.
     This is a container class intended for use within the DSADirectedGraph
     class.
     """
@@ -73,7 +75,8 @@ class DSADirectedGraphVertex:
                         adj=" ".join([k for k, v in self.successor])))
 
     def gv(self) -> str:
-        return "".join([f"\"{self.label}\" -> \"{k}\"\n" for k, v in self.successor])
+        return "".join([f"\"{self.label}\" -> \"{k}\"\n"
+                        for k, v in self.successor])
 
     def __eq__(self, other: 'DSADirectedGraphVertex') -> bool:
         return self.label == other.label
@@ -151,7 +154,8 @@ class DSADirectedGraph:
         adjMat = self.adjacencyMatrix()
         for i, l in enumerate(label):
             matStr += l + " " * (colWidth - len(l))
-            matStr += (" " * (colWidth - 1)).join([str(x) for x in adjMat[i].flat])
+            matStr += ((" " * (colWidth - 1))
+                       .join([str(x) for x in adjMat[i].flat]))
             matStr += "\n"
         return matStr
 
@@ -171,7 +175,8 @@ class DSADirectedGraph:
         return mat
 
     def display(self) -> str:
-        return "digraph {\nrankdir=BT\nconcentrate=true\n" + "".join([v.gv() for _, v in self._verticies]) + "}\n"
+        return ("digraph {\nrankdir=BT\nconcentrate=true\n"
+                + "".join([v.gv() for _, v in self._verticies]) + "}\n")
 
     def render(self, *, type='svg', id=''):
         """
@@ -185,12 +190,14 @@ class DSADirectedGraph:
         from tempfile import NamedTemporaryFile
 
         if which("dot") is None:
-            print("Graphviz not installed. Falling back on adjacency list display.")
+            print("Graphviz not installed.")
+            print("Falling back on adjacency list display.")
             print(self.displayAsList())
         else:
             with NamedTemporaryFile(delete=False, suffix=f'{id}.{type}') as f:
                 # Render the graph.
-                run(["dot", f"-T{type}", "-o", f.name], input=self.display().encode())
+                run(["dot", f"-T{type}", "-o", f.name],
+                    input=self.display().encode())
                 # Attempt to display the graph.
                 if which("xdg-open") is not None:
                     run(["xdg-open", f.name])
@@ -251,7 +258,7 @@ class UnitTestDSADirectedGraph(unittest.TestCase):
             self.assertEqual(x1[0], x2)
         for x1, x2 in zip(graph.getPredecessor("hello"), ["world"]):
             self.assertEqual(x1[0], x2)
-    
+
     def testRemoval(self):
         graph = DSADirectedGraph()
         graph.addVertex("a", None)

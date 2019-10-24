@@ -4,6 +4,7 @@ import numpy.random
 
 from ADT.DSALinkedList import DSALinkedList
 
+
 @total_ordering
 class SocialNetworkPost:
     """
@@ -59,34 +60,43 @@ class SocialNetworkPost:
 
     def done(self) -> bool:
         return len(self._recentlyLiked) == 0
-        
+
     def save(self) -> str:
-        return (f"content: {self.content}\nuser: {self.user().name()}\nliked:\n"
-                + '\n'.join([x.name() for x in self.liked()]) + '\n')
+        return (f"content: {self.content}\n"
+                f"user: {self.user().name()}\n"
+                f"liked:\n"
+                + '\n'.join([x.name() for x in self.liked()])
+                + '\n')
 
     def update(self) -> str:
         """
         The update algorithm works as follows:
-        Check that there exists some users that have liked the post in the previous timestep.
-            If there are none, the update ends and the next post is loaded.
-        Iterate through all users who liked the post in the previous timestep.
-            Each of their followers is 'exposed' to the post, and have a chance of liking the post.
-            This chance is sampled from a Bernoulli distribution with probability
-            clamp(prob_like * clickbait_factor, 0, 1).
-        If a user likes a post in the current timestep, they have a chance of following the
-            original poster. This is sampled using the same technique as above, with global probability
-            prob_foll.
+        Check that there exists some users that have liked the post in the
+        previous timestep. If there are none, the update ends and the next
+        post is loaded. Iterate through all users who liked the post in the
+        previous timestep. Each of their followers is 'exposed' to the post,
+        and have a chance of liking the post.
+        This chance is sampled from a Bernoulli distribution with probability
+        clamp(prob_like * clickbait_factor, 0, 1).
+        If a user likes a post in the current timestep, they have a chance of
+        following the original poster.
+        This is sampled using the same technique as above,
+        with global probability prob_foll.
 
-        Note that in the above algorithm, if a user does not like a post, they may potentially
-        be exposed to it later via a different friend. This behaviour is intentional, as it incentivises
+        Note that in the above algorithm, if a user does not like a post,
+        they may potentially be exposed to it later via a different friend.
+        This behaviour is intentional, as it incentivises
         a highly connected network.
         """
         newLikes = DSALinkedList()
         for x in self._recentlyLiked:
             for user in x.followers():
                 # Does the user like the post?
-                if numpy.random.binomial(1, min(1, self._probLike * self.clickbaitFactor)) == 1:
-                    if not self._liked.find(user) and not self._recentlyLiked.find(user) and not newLikes.find(user):
+                if numpy.random.binomial(1, min(1, self._probLike *
+                                                self.clickbaitFactor)) == 1:
+                    if (not self._liked.find(user)
+                       and not self._recentlyLiked.find(user)
+                       and not newLikes.find(user)):
                         newLikes.insertFirst(user)
                     # Does the user follow the original poster?
                     if numpy.random.binomial(1, self._probFollow) == 1:
