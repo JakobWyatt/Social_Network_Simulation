@@ -38,3 +38,8 @@ To run unit tests, change into the src directory and run the command:
 ```python3 -m unittest discover . -p '*'```
 
 This automatically executes all unittests in the program.
+
+## Submodules
+Code specific to the Social Network implementation is stored in ```src/```,
+whereas code that is generic and implements ADTs/Data Structures 
+is stored in ```src/ADT/```.

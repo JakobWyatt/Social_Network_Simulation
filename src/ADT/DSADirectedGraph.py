@@ -192,7 +192,7 @@ class DSADirectedGraph:
         if which("dot") is None:
             print("Graphviz not installed.")
             print("Falling back on adjacency list display.")
-            print(self.displayAsList())
+            print(self.displayExploded())
         else:
             with NamedTemporaryFile(delete=False, suffix=f'{id}.{type}') as f:
                 # Render the graph.
