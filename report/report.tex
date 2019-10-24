@@ -1,6 +1,8 @@
 \documentclass{article}
 
 \usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{float}
 
 \title{Performance and Simulation of Social Networks}
 \author{Jakob Wyatt\\19477143}
@@ -117,8 +119,8 @@ First, a number of verticies are created.
 Next, these verticies are iterated over, and the number of successors of each
 vertex is calculated by sampling from a distribution $X \sim N\left(follower\_av, follwer\_sd^2\right)$.
 
-To select the edges of the network, an approach similar in nature to a variogram
-(https://en.wikipedia.org/wiki/Variogram) was used (taken from the field of geostatistics).
+To select the edges of the network, an approach was used that is similar in concept
+to a variogram, used in the field of geostatistics.
 A variogram measures the amount of correlation between two points that are some distance apart.
 In this algorithm, this distance is discrete rather than continuous, and is measured by finding
 some path between two nodes. By increasing the spacial correlation at short distances,
@@ -173,10 +175,21 @@ or decrease the amount of connections within the group, relative to all other co
 
 Follower average per person, as well as likes per person, all increased over time.
 This was expected, as there is no mechanism for unliking or unfollowing a user
-within the simulation mode, and post. These statistics increased exponentially over time;
-however, this exponential behaviour could only be observed when the probabilities
+within the simulation mode, and post. The rate of change also increased over time;
+however, this behaviour could only be observed when the like and follow probabilities
 were low. With a high probability, such as 0.5, posts often 'saturate' the network,
 and give data that is not representative of a real life situation.
+\begin{figure}[H]
+\centering
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{follAv}
+\end{minipage}\hfill
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{likes}
+\end{minipage}
+\end{figure}
 
 Follower s.d. per person also increased over time. However, when scaled with respect
 to the total number of followers, it was observed to decrease over time,
@@ -195,6 +208,11 @@ However, when the s.d. of the clickbait factor is further increased,
 the s.d. of followers per person only increases by a small amount.
 This demonstrates the law of diminishing returns.
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{follSd}
+\end{figure}
+
 Another question that can be asked about a social network is
 the tradeoff between the like probability and the follow probability.
 If the follow probability is low, the user base will stagnate and there will
@@ -210,6 +228,11 @@ This shows that when creating a social network, content that is relevant
 to the user may help to grow the platform long term. By only showing
 sensationalist non-personalized content to the user, they may be less likely to follow the original poster.
 This causes stagnation and a lack of growth within a network.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{Growth}
+\end{figure}
 
 \section{Conclusion and Future Work}
 Despite being simple, the social network model and algorithm that was used
