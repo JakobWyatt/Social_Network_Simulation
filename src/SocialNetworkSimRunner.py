@@ -168,14 +168,13 @@ class SocialNetworkSimRunner:
         space has many dimensions (curse of dimensionality), causing a large amount of data 
         to be produced at a very high runtime.
         """
-        like_prob = [0.5]
-        foll_prob = [0.5]
+        like_prob = [0.1, 0.2, 0.5]
+        foll_prob = [0, 0.4, 0.5]
         size = [50]
         follower_average_mult_sz = [0.2]
-        follower_sd_mult_av = [0.5]
-        clickbait_sd = [0, 1, 3]
+        follower_sd_mult_av = [0, 0.5]
+        clickbait_sd = [0, 1]
         posts = 50
-        outputCsv = ""
         for lp in like_prob:
             for fp in foll_prob:
                 for sz in size:
