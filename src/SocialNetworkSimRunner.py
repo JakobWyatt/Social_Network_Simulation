@@ -1,11 +1,15 @@
+import random
+import math
+import itertools
+from typing import Callable
+from tempfile import NamedTemporaryFile
+
+import numpy
+
 from ADT.DSADirectedGraph import *
 from ADT.DSALinkedList import *
 from SocialNetworkCore import SocialNetwork
 
-import random
-import math
-import numpy
-import itertools
 
 class SocialNetworkSimRunner:
     """
@@ -18,32 +22,34 @@ class SocialNetworkSimRunner:
     @staticmethod
     def SimulationInterface(netfile, eventfile, prob_like, prob_foll):
         try:
-            fileName, _ = SocialNetworkSimRunner.Simulation(netfile, eventfile, prob_like, prob_foll)
-            print(f"Simulation logged to {fileName}")
+            state = SocialNetworkSimRunner.Simulation(netfile, eventfile, prob_like, prob_foll)
+            with NamedTemporaryFile(delete=False, mode='w') as f:
+                filename = f.name
+                for x in state:
+                    f.write(f"{x.simstate}"
+                            f"Likes per person per post: {x.likes}\n"
+                            f"Follower Average: {x.favg}\nFollower s.d: {x.fsd}\n"
+                            f"Clustering Coefficient: {x.clustering}\n")
+            print(f"Simulation logged to {filename}")
         except ValueError as ex:
             print(str(ex))
             raise ex
 
     @staticmethod
-    def Simulation(netfile, eventfile, prob_like, prob_foll) -> (str, DSALinkedList):
+    def Simulation(netfile, eventfile, prob_like, prob_foll) -> DSALinkedList:
         network = SocialNetwork(probLike=prob_like, probFollow=prob_foll)
         network.loadNetwork(netfile)
         events = [x.rstrip('\n') for x in eventfile]
-        from tempfile import NamedTemporaryFile
-        with NamedTemporaryFile(delete=False, mode='w') as f:
-            filename = f.name
-            fileData, stats = SocialNetworkSimRunner.ExecEventFile(network, events)
-            f.write(fileData)
-        return filename, stats
+        return SocialNetworkSimRunner.ExecEventFile(network, events)
 
     @staticmethod
-    def ExecEventFile(network, eventFile) -> (str, DSALinkedList):
+    def ExecEventFile(network, events) -> DSALinkedList:
         outcome = ""
         from collections import namedtuple
-        SimStats = namedtuple('SimStats', 'post likes clustering favg fsd')
-        stats = DSALinkedList()
+        SimStats = namedtuple('SimStats', 'post likes clustering favg fsd simstate')
+        state = DSALinkedList()
         post = 0
-        for x in eventFile:
+        for x in events:
             tokens = x.split(':')
             if len(tokens) == 3 and tokens[0] == "F":
                 network.follow(tokens[2], tokens[1])
@@ -59,48 +65,70 @@ class SocialNetworkSimRunner:
                 else:
                     network.addPost(tokens[1], tokens[2], float(tokens[3]))
                 while not network.done():
-                    stats.insertLast(SimStats(post, network.likesScaled(),
-                                               network.clusteringCoefficient(), *network.followsAvSd()))
-                    outcome += network.simstate()
-                    outcome += (f"Likes per person per post: {stats.peekFirst().likes}\n"
-                                f"Follower Average: {stats.peekFirst().favg}\nFollower s.d: {stats.peekFirst().fsd}\n"
-                                f"Clustering Coefficient: {stats.peekFirst().clustering}")
+                    state.insertLast(SimStats(post, network.likesScaled(),
+                                              network.clusteringCoefficient(),
+                                              *network.followsAvSd(),
+                                              network.simstate()))
                     network.update()
                 post += 1
             else:
                 raise ValueError("Invalid file format.")
-        return outcome, stats
+        return state
 
     @staticmethod
-    def GenerateSocialNetworkAndPost(*, size: int, follower_av: float, follower_sd: float,
-                              clustering_func, post_num, clickbait_sd) -> (str, str):
+    def GeneratePosts(*, size: int, post_num: int, clickbait_sd: float):
+        with NamedTemporaryFile(delete=False, mode='w') as f:
+            postFilename = f.name
+            for _ in range(post_num):
+                postNode = f"A{random.choice(range(size))}"
+                f.write(f"P:{postNode}:CONTENT:{max(0, random.gauss(1, clickbait_sd))}\n")
+        return postFilename
+
+    @staticmethod
+    def GenerateSocialNetwork(*, size: int, follower_av: float, follower_sd: float,
+                              clustering_func: Callable[[float], float]) -> str:
         """
-        This method generates a social network with given parameters, and writes it
-        to a file.
-        The algorithm used to generate this network was created by the author,
-        and to their knowledge, does not exist anywhere else.
-        First, a number of verticies are created equal to the input parameter size.
+        To generate the simulated networks, a unique algorithm was used
+        that was created by the author, and to their knowledge, does not exist anywhere else.
+        This algorithm allows efficient generation of structured (non-random) networks,
+        with a consistent runtime complexity of O(V*E).
+
+        First, a number of verticies are created.
         Next, these verticies are iterated over, and the number of successors of each
-        vertex is calculated by sampling from a distribution X ~ N(follower_av, follwer_sd^2).
+        vertex is calculated by sampling from a distribution X ~ N(follower_av, follower_sd^2).
 
-        To select the edges of the network, an approach similar in nature to a variogram
-        (https://en.wikipedia.org/wiki/Variogram) was used (taken from the field of geostatistics).
-        A variogram measures the amount of correlation between two points that are some distance apart.
+        To select the edges of the network, an approach was used that is similar in concept
+        to a variogram, used in the field of geostatistics.
+        A variogram measures the amount of correlation between two points in a field that are some distance apart.
         In this algorithm, this distance is discrete rather than continuous, and is measured by finding
-        a path between two nodes.
-        This gives some way of changing the clustering coefficient of a graph, as a graph with high
-        clustering coefficient will have a higher number of connections to 'nearby' verticies.
+        a path between two nodes. By increasing the correlation between nodes at short distances,
+        a graph can be created with a higher clustering coefficient. Alternatively,
+        decreasing the correlation between nodes causes the graph to become more randomised,
+        and less clustered.
 
-        To sample an edge from this variogram, a random walk is performed starting at a given vertex.
+        The clustering coefficient of a vertex can be generalized to include all verticies
+        within some distance h of a central vertex, rather than
+        only verticies within a distance of 1 of the central vertex.
+
+        In a social network, it is reasonable to assume that the clustering
+        coefficient will decrease as the distance increases.
+        One way to visualise this is that your friends are likely to be interconnected,
+        whereas your friends of friends are less likely to be interconnected directly.
+        By creating graphs that follow this property, realistic social networks
+        can be created for use in simulations.
+
+        To generate an edge in the graph, a random walk is performed starting at a given vertex, V_0.
         This random walk occurs along any nodes that are predecessors of the current node,
         and does not loop back onto previously visited nodes.
-        At each step on the random walk, the probability of adding an edge with the current vertex
-        is calculated by evaluating the clustering_func at the distance from the original node.
-        If a follow occurs, the process
-        starts again and repeats until all necessary edges have been created.
-        If there are no valid nodes to walk to,
-        or has reached some distance threshold from the original node,
-        a random node from the graph is chosen to follow. This allows initial
+        At each step on the random walk, the probability of creating an edge between the current node and V_0
+        is calculated by evaluating the variogram v(h), where h is the distance that has been travelled on the random walk.
+
+        If an edge is created, a new random walk begins starting at the vertex $V_0$,
+        and this algorithm repeats until the correct number of edges have been created
+        for this vertex.
+        If there are no valid verticies to walk to,
+        or the random walk has reached some distance threshold from the original node,
+        an edge is created with any random vertex in the graph. This allows initial
         'bootstrapping' of the network when no edges have yet been created.
         """
         network = DSADirectedGraph()
@@ -135,38 +163,34 @@ class SocialNetworkSimRunner:
                     successorLabels = [k for k, _ in node.successor]
                     possibleNodes = list(filter(lambda x: (x not in successorLabels) and x != node.label, possibleNodes))
                     network.addEdge(node.label, random.choice(possibleNodes))
-        from tempfile import NamedTemporaryFile
         with NamedTemporaryFile(delete=False, mode='w') as f:
             netFilename = f.name
             f.write(network.displayExploded())
-        # Generate Posts
-        with NamedTemporaryFile(delete=False, mode='w') as f:
-            postFilename = f.name
-            for _ in range(post_num):
-                postNode = f"A{random.choice(range(size))}"
-                f.write(f"P:{postNode}:CONTENT:{max(0, random.gauss(1, clickbait_sd))}\n")
-        return netFilename, postFilename
+        return netFilename
 
     @staticmethod
-    def GridSearch(stream):
+    def GridSearch(stream: Callable[[None], str]):
         """
-        This method uses the gridsearch algorithm to search through a large parameter space,
-        and measure the output of a function at many points in the space.
-        These outputs are then logged to a file as csv data, and can be used for further analysis.
+        To profile multiple runs of the simulation a gridsearch algorithm was used
+        to vary the below parameters:
+            - Average and s.d. of followers per user
+            - Like/Follow probabilities
+            - Number of users in the network
 
-        Parameters that are varied in this function are the like and follow probabilities,
-        network size, clickbait standard deviation, post/timestep number, and
-        follower average (density) / follower standard deviation (relative popularity).
+        First, arrays that contain the parameter values to be tested are created.
+        Next, for all possible combinations of these parameters, a network
+        matching these parameters is created. A simulation is then run on all networks,
+        with simulation statistics being logged to a file in CSV format.
 
-        In this algorithm, for each possible combination of the parameter arrays
-        (n-dimensional grid), a network using these parameters is generated,
-        and a simulation of that network is run..
+        Parameters that are varied during the gridsearch include the like and follow probabilities,
+        network size, clickbait standard deviation, and
+        follower average / follower standard deviation.
 
-        An advantage of this algorithm is that it is very easy to implement compared to
-        other search space algorithms, such as gradient descent and evolution.
-        However, a disadvantage is that it searches a very large volume when the parameter
-        space has many dimensions (curse of dimensionality), causing a large amount of data 
-        to be produced at a very high runtime.
+        An advantage of this algorithm is that it is very simple to implement.
+        However, a disadvantage is that it takes a long time to execute when there are many input parameters.
+        The algorithmic complexity of the gridsearch algorithm
+        is O(x^n), where n is the number of parameters that are varied and x is the number
+        of datapoints per parameter.
         """
         like_prob = [0.1, 0.2, 0.5]
         foll_prob = [0, 0.4, 0.5]
@@ -181,18 +205,22 @@ class SocialNetworkSimRunner:
                     for favg in follower_average_mult_sz:
                         for fsd in follower_sd_mult_av:
                             for csd in clickbait_sd:
-                                files = SocialNetworkSimRunner.GenerateSocialNetworkAndPost(size=sz, follower_av=favg * sz, follower_sd=fsd * favg * sz,
-                                                                     clustering_func=lambda x: 0, post_num=posts, clickbait_sd=csd)
-                                with open(files[0], 'r') as net, open(files[1], 'r') as event:
-                                    _, stats = SocialNetworkSimRunner.Simulation(net, event, lp, fp)
+                                netfile = SocialNetworkSimRunner.GenerateSocialNetwork(size=sz, follower_av=favg * sz, follower_sd=fsd * favg * sz,
+                                                                     clustering_func=lambda x: 0)
+                                postfile = SocialNetworkSimRunner.GeneratePosts(size=sz, post_num=posts, clickbait_sd=csd)
+                                with open(netfile, 'r') as net, open(postfile, 'r') as event:
+                                    stats = SocialNetworkSimRunner.Simulation(net, event, lp, fp)
                                 stream(f"\n\nlike_prob:{lp},follow_prob:{fp},size:{sz},follower_average_mult_sz:{favg},follower_sd_mult_av:{fsd},clickbait_sd:{csd}\n")
                                 stream("post,likes,clustering,favg,fsd\n")
                                 stream("\n".join([f"{x.post},{x.likes},{x.clustering},{x.favg},{x.fsd}" for x in stats]))
 
 
 if __name__ == "__main__":
-    with open("../report/subset.csv", "w") as f:
+    with open("../report/test.csv", "w") as f:
         def printAndWrite(x):
             print(x, end='')
             f.write(x)
-        SocialNetworkSimRunner.GridSearch(printAndWrite)
+        try:
+            SocialNetworkSimRunner.GridSearch(printAndWrite)
+        except KeyboardInterrupt:
+            print("")

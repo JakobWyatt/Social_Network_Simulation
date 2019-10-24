@@ -43,10 +43,10 @@ if __name__ == "__main__":
         simulation_parser.print_help(sys.stderr)
     else:
         args = parser.parse_args()
-        if args.mode == "-i":
-            try:
+        try:
+            if args.mode == "-i":
                 interactive().cmdloop()
-            except KeyboardInterrupt:
-                print("")
-        elif args.mode == "-s":
-            SocialNetworkSimRunner.SimulationInterface(args.netfile, args.eventfile, args.prob_like, args.prob_foll)
+            elif args.mode == "-s":
+                SocialNetworkSimRunner.SimulationInterface(args.netfile, args.eventfile, args.prob_like, args.prob_foll)
+        except KeyboardInterrupt:
+            print("")
