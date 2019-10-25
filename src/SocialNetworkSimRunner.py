@@ -52,24 +52,32 @@ class SocialNetworkSimRunner:
                                            'favg fsd'))
         state = DSALinkedList()
         post = 0
-        for x in events:
+        for i, x in enumerate(events):
             tokens = x.split(':')
             if len(tokens) == 3 and tokens[0] == "F":
-                network.follow(tokens[2], tokens[1])
+                if not network.follow(tokens[2], tokens[1]):
+                    print(f"{tokens[2]} already follows {tokens[1]}.")
             elif len(tokens) == 3 and tokens[0] == "U":
-                network.unfollow(tokens[2], tokens[1])
+                if not network.unfollow(tokens[2], tokens[1]):
+                    print(f"{tokens[2]} already follows {tokens[1]}.")
             elif len(tokens) == 2 and tokens[0] == "A":
                 try:
                     network.addUser(tokens[1])
                 except ValueError as ex:
-                    print(str(ex))
+                    print(f"Line {i + 1}: " + str(ex))
             elif len(tokens) == 2 and tokens[0] == "R":
-                network.removeUser(tokens[1])
+                try:
+                    network.removeUser(tokens[1])
+                except ValueError as ex:
+                    print(f"Line {i + 1}: " + str(ex))
             elif len(tokens) == 3 or len(tokens) == 4 and tokens[0] == "P":
-                if len(tokens) == 3:
-                    network.addPost(tokens[1], tokens[2])
-                else:
-                    network.addPost(tokens[1], tokens[2], float(tokens[3]))
+                try:
+                    if len(tokens) == 3:
+                        network.addPost(tokens[1], tokens[2])
+                    else:
+                        network.addPost(tokens[1], tokens[2], float(tokens[3]))
+                except ValueError:
+                    print(f"Line {i + 1}: Could not create post.")
                 while not network.done():
                     state.insertLast(SimStats(post,
                                               network.simstate(),

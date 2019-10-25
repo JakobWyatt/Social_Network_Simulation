@@ -120,7 +120,7 @@ class SocialNetwork:
 
     def addUser(self, user: str):
         if self._network.hasVertex(user):
-            raise ValueError(f"User {user} already exists.")
+            raise ValueError(f"{user} already exists.")
         # Value is cached posts
         self._network.addVertex(user, DSALinkedList())
         self._mostFollowed.add(self.findUser(user), None)
@@ -162,8 +162,7 @@ class SocialNetwork:
             self._posts.add(self._currentPost, None)
             user.addPost(self._currentPost)
         except ValueError as e:
-            raise ValueError((f"Could not create post. User: {userName}, ",
-                              f"Clickbait factor: {clickbaitFactor}")) from e
+            raise ValueError("Could not create post.") from e
 
     def done(self) -> bool:
         return len(self._posts) == 0 or self._currentPost.done()
