@@ -119,6 +119,8 @@ class SocialNetwork:
             raise ValueError("There are no posts to unlike.")
 
     def addUser(self, user: str):
+        if ":" in user:
+            raise ValueError(f"Invalid username.")
         if self._network.hasVertex(user):
             raise ValueError(f"{user} already exists.")
         # Value is cached posts

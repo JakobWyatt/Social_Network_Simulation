@@ -132,7 +132,7 @@ class interactive(cmd.Cmd):
             else:
                 print("Invalid usage.")
         except ValueError as ex:
-            print(str(ex))
+            print("Could not create post.")
 
     def do_display(self, arg):
         'Display the social network: display'
