@@ -27,6 +27,7 @@ class interactive(cmd.Cmd):
     def __init__(self):
         super(interactive, self).__init__()
         self._network = SocialNetwork()
+        self._probSet = False
 
     def do_load(self, arg):
         'Load a social network: load <netfile>'
@@ -116,6 +117,7 @@ class interactive(cmd.Cmd):
             try:
                 self._network.probLike = float(args[0])
                 self._network.probFollow = float(args[1])
+                self._probSet = True
             except ValueError as ex:
                 print(str(ex))
         else:
@@ -124,15 +126,18 @@ class interactive(cmd.Cmd):
     def do_post(self, arg):
         'Create a new post: post <name>:<content>:<(optional) clickbaitFactor>'
         args = arg.split(':')
-        try:
-            if len(args) == 2:
-                self._network.addPost(args[0], args[1])
-            elif len(args) == 3:
-                self._network.addPost(args[0], args[1], float(args[2]))
-            else:
-                print("Invalid usage.")
-        except ValueError as ex:
-            print("Could not create post.")
+        if not self._probSet:
+            print("Probabilities have not been set.")
+        else:
+            try:
+                if len(args) == 2:
+                    self._network.addPost(args[0], args[1])
+                elif len(args) == 3:
+                    self._network.addPost(args[0], args[1], float(args[2]))
+                else:
+                    print("Invalid usage.")
+            except ValueError as ex:
+                print("Could not create post.")
 
     def do_display(self, arg):
         'Display the social network: display'
