@@ -6,6 +6,8 @@
 \usepackage{float}
 \usepackage{graphicx}
 
+\graphicspath{{./resources/}}
+
 \title{COMP1002 Assignment\\Documentation}
 \author{Jakob Wyatt\\19477143}
 
@@ -153,8 +155,8 @@ as edges. This helps to enhance clarity, as follows between users are inherently
 
 Operations that must be performed within this directed graph are find/add/remove verticies,
 and find/add/remove edges. It should also be noted that within the context of a social network,
-there exists a maximum of one directed edge between any 2 nodes. Duplicate nodes also will not
-exist.
+there exists a maximum of one directed edge between any 2 nodes. Duplicate verticies will not exist.
+
 To store verticies and edges within this directed graph, the \texttt{DSALinkedList} class was originally
 used to store this data. However, this ended up being rather inefficient, with a time complexity of
 $O\left(V\right)$ for vertex find/remove and $O\left(E + V\right)$ for edge find/remove.
